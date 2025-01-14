@@ -1,0 +1,19 @@
+name: "Run Stryker.NET Docker"
+description: "GitHub Action for mutation testing with Stryker.NET"
+author: "lyndychivs"
+
+branding:
+  icon: "crosshair"
+  color: "red"
+
+inputs:
+  configurationFile:
+    description: "The name of the Stryker.NET configuration file (must be in the root of the repository)."
+    required: true
+    default: "stryker-config.json"
+ 
+runs:
+  using: "docker"
+  image: "dockerfile"
+  args:
+    - ${{inputs.configurationFile}}
