@@ -22,3 +22,4 @@ runs:
   image: "dockerfile"
   args:
     - ${{inputs.configurationFile}}
+    - ${{inputs.dashboardApiKey}}
