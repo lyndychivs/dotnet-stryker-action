@@ -23,4 +23,4 @@ runs:
   args:
     - ${{inputs.configurationFile}}
     - ${{inputs.dashboardApiKey}}
-    - ${{GITHUB_REF##*/}}
+    - ${{ github.head_ref || github.ref_name }} 
