@@ -1,4 +1,4 @@
-name: "Stryker.NET Mutation Testing"
+name: "dotnet-stryker-action"
 description: "Action for mutation testing with Stryker.NET via Docker"
 author: "lyndychivs"
 
