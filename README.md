@@ -9,11 +9,17 @@ All Configurations for the Framework must be specified via the Configuration fil
 > [!IMPORTANT]
 > The Configuration File must exist at the root level of the Repository.
 
+## Docker
+#### Example
+```
+docker run ghcr.io/lyndychivs/stryker-dotnet-action:latest stryker-config.json
+```
+
 ## GitHub Actions
 #### Inputs
 `configurationFile` : The name of the Stryker.NET configuration file (must be in the root of the repository).
 
-### Example
+#### Example
 ```yml
 name: Run Stryker.NET
 
