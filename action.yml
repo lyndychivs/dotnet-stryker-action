@@ -1,5 +1,5 @@
 name: "Stryker.NET Mutation Testing"
-description: "GitHub Action for mutation testing with Stryker.NET via Docker"
+description: "Action for mutation testing with Stryker.NET via Docker"
 author: "lyndychivs"
 
 branding:
