@@ -16,6 +16,11 @@ inputs:
     description: "The API key for authentication with the Stryker dashboard."
     required: false
     default: ""
+
+  version:
+    description: "The version of the report. This should be filled with the branch name, git tag or git sha."
+    required: false
+    default: "main"
     
 runs:
   using: "docker"
@@ -23,4 +28,4 @@ runs:
   args:
     - ${{inputs.configurationFile}}
     - ${{inputs.dashboardApiKey}}
-    - ${{ github.head_ref || github.ref_name }} 
+    - ${{inputs.version}}
