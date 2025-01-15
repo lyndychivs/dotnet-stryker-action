@@ -6,9 +6,9 @@ configFile=$1
 dashboardApiKey=$2
 version=$3
 
-if [ -z "${dashboardApiKey}" ]; then
+if [ -n "${dashboardApiKey}" ]; then
    echo "dashboard-api-key provided" 
-   if [ -z "${version}" ]; then
+   if [ -n "${version}" ]; then
       echo "version provided: $version"
       dotnet stryker --config-file $configFile --dashboard-api-key $dashboardApiKey --version $version
    else
