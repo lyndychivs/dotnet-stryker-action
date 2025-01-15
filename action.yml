@@ -11,7 +11,12 @@ inputs:
     description: "The name of the Stryker.NET configuration file (must be in the root of the repository)."
     required: true
     default: "stryker-config.json"
- 
+
+  dashboardApiKey:
+    description: "The API key for authentication with the Stryker dashboard."
+    required: false
+    default : ""
+
 runs:
   using: "docker"
   image: "dockerfile"
