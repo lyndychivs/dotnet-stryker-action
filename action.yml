@@ -15,11 +15,12 @@ inputs:
   dashboardApiKey:
     description: "The API key for authentication with the Stryker dashboard."
     required: false
-    default : ""
-
+    default: ""
+    
 runs:
   using: "docker"
   image: "dockerfile"
   args:
     - ${{inputs.configurationFile}}
     - ${{inputs.dashboardApiKey}}
+    - ${{github.ref_name}}
