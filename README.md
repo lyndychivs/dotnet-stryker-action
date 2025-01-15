@@ -1,13 +1,12 @@
 # stryker-dotnet-action
 GitHub Action for mutation testing with [Stryker.NET](https://stryker-mutator.io/docs/stryker-net/introduction/) via Docker.
 
-> [!IMPORTANT]
-> This Action only accepts a [Stryker Mutator .NET Configuration](https://stryker-mutator.io/docs/stryker-net/configuration) file (`.json` or `.yaml` format).
->
-> The Configuration File must exist at the root level of the Repository.
+## GitHub Action
+This Action only accepts a [Stryker Mutator .NET Configuration](https://stryker-mutator.io/docs/stryker-net/configuration) file (`.json` or `.yaml` format).
 
-## GitHub Actions
-#### Inputs
+The Configuration File must exist at the root level of the Repository.
+
+### Inputs
 `configurationFile` (required) : The name of the Stryker.NET configuration file (must be in the root of the repository).
 
 `dashboardApiKey` (optional) : The API key for authentication with the Stryker dashboard.
