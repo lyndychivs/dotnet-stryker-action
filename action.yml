@@ -20,7 +20,7 @@ inputs:
   version:
     description: "The version of the report. This should be filled with the branch name, git tag or git sha."
     required: false
-    default: "main"
+    default: ""
     
 runs:
   using: "docker"
