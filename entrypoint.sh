@@ -2,7 +2,7 @@
 
 export PATH="$PATH:/root/.dotnet/tools"
 
-if [[ -n "${2// /}" ]]; then
+if [ -n "$(echo $2 | grep -v '^[[:space:]]*$')" ]; then
   echo "dashboard-api-key provided"
   dotnet stryker --config-file $1 --dashboard-api-key $2
 else
