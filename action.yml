@@ -26,6 +26,6 @@ runs:
   using: "docker"
   image: "dockerfile"
   args:
-    - ${{inputs.configurationFile}}
-    - ${{inputs.dashboardApiKey}}
-    - ${{inputs.version}}
+    - ${{ inputs.configurationFile }}
+    - ${{ inputs.dashboardApiKey }}
+    - ${{ inputs.version }}
