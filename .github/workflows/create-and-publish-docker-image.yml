@@ -1,4 +1,5 @@
-name: Create and Publish a Docker Image
+name: create-and-publish-docker-image
+run-name: Create and Publish Docker Image
 
 on:
   push:
@@ -20,7 +21,7 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Log in to the Container
+      - name: Log in to the Docker Container
         uses: docker/login-action@9780b0c442fbb1117ed29e0efdff1e18412f7567
         with:
           registry: ${{ env.REGISTRY }}
