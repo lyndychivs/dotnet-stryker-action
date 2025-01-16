@@ -1,4 +1,4 @@
-name: "Run Stryker.NET Docker"
+name: "dotnet-stryker-action"
 description: "GitHub Action for mutation testing with Stryker.NET via Docker"
 author: "lyndychivs"
 
