@@ -1,4 +1,4 @@
-# stryker-dotnet-action
+# dotnet-stryker-action
 GitHub Action for mutation testing with [Stryker.NET](https://stryker-mutator.io/docs/stryker-net/introduction/) via Docker.
 
 ## GitHub Action
@@ -27,7 +27,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Run Stryker.NET against Repository
-        uses: lyndychivs/stryker-dotnet-action@master
+        uses: lyndychivs/dotnet-stryker-action@master
         with:
           configurationFile: "stryker-config.json"
 ```
@@ -46,7 +46,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Run Stryker.NET against Repository
-        uses: lyndychivs/stryker-dotnet-action@master
+        uses: lyndychivs/dotnet-stryker-action@master
         with:
           configurationFile: "stryker-config.json"
           dashboardApiKey: ${{ secrets.STRYKER_DASHBOARD }} # API key saved in Secrets
