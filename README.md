@@ -27,7 +27,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Run Stryker.NET against Repository
-        uses: lyndychivs/dotnet-stryker-action@master
+        uses: lyndychivs/dotnet-stryker-action@v1
         with:
           configurationFile: "stryker-config.json"
 ```
@@ -46,7 +46,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Run Stryker.NET against Repository
-        uses: lyndychivs/dotnet-stryker-action@master
+        uses: lyndychivs/dotnet-stryker-action@v1
         with:
           configurationFile: "stryker-config.json"
           dashboardApiKey: ${{ secrets.STRYKER_DASHBOARD }} # API key saved in Secrets
