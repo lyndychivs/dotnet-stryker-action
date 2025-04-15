@@ -4,14 +4,12 @@ GitHub Action for mutation testing with [Stryker.NET](https://stryker-mutator.io
 ## GitHub Action
 This Action only accepts a [Stryker Mutator .NET Configuration](https://stryker-mutator.io/docs/stryker-net/configuration) file (`.json` or `.yaml` format).
 
-The Configuration File must exist at the root level of the Repository.
-
 ### Inputs
-`configurationFile` (required) : The name of the Stryker.NET configuration file (must be in the root of the repository).
+`configurationFile` (required) : The name of the Stryker.NET configuration file.
 
 `dashboardApiKey` (optional) : The API key for authentication with the Stryker dashboard.
 
-`version` (optional) : The version of the report. This should be filled with the branch name, git tag or git sha.
+`version` (optional) : The version of the report. This should be filled with the branch Name, git Tag or git SHA.
 
 #### Example 1
 ```yml
