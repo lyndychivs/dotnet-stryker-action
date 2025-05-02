@@ -2,14 +2,19 @@
 GitHub Action for mutation testing with [Stryker.NET](https://stryker-mutator.io/docs/stryker-net/introduction/) via Docker.
 
 ## GitHub Action
-This Action only accepts a [Stryker Mutator .NET Configuration](https://stryker-mutator.io/docs/stryker-net/configuration) file (`.json` or `.yaml` format).
+This Action accepts a [Stryker Mutator .NET Configuration](https://stryker-mutator.io/docs/stryker-net/configuration) file (`.json` or `.yaml` format).
 
-### Inputs
-`configurationFile` (required) : The name of the Stryker.NET configuration file.
+*Create a configuration file:*
+```
+dotnet stryker init
+```
 
-`dashboardApiKey` (optional) : The API key for authentication with the Stryker dashboard.
-
-`version` (optional) : The version of the report. This should be filled with the branch Name, git Tag or git SHA.
+### Parameters
+| Argument            | Description | Default | Required |
+| :---                | :---        | :---    | :---     |
+| `configurationFile` | File path of the Stryker.NET configuration file. | `stryker-config.json` | Yes |
+| `dashboardApiKey`   | API key for authentication with the Stryker dashboard. | — | No |
+| `version`           | Version of the report.<br/>This should be filled with the branch Name, git Tag or git SHA. | — | No |
 
 #### Example 1
 ```yml
@@ -25,7 +30,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Run Stryker.NET against Repository
-        uses: lyndychivs/dotnet-stryker-action@v1
+        uses: lyndychivs/dotnet-stryker-action@v1.1
         with:
           configurationFile: "stryker-config.json"
 ```
@@ -44,7 +49,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Run Stryker.NET against Repository
-        uses: lyndychivs/dotnet-stryker-action@v1
+        uses: lyndychivs/dotnet-stryker-action@v1.1
         with:
           configurationFile: "stryker-config.json"
           dashboardApiKey: ${{ secrets.STRYKER_DASHBOARD }} # API key saved in Secrets
