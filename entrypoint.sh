@@ -9,7 +9,7 @@ version=$3
 dashboardCommand=""
 if [ -n "${dashboardApiKey}" ] && [ "${dashboardApiKey}" != "" ]; then
    echo "dashboard-api-key provided"
-   dashboardCommand="--dashboard-api-key $dashboardApiKey"
+   dashboardCommand="--reporter 'dashboard' --dashboard-api-key $dashboardApiKey"
 else
    echo "dashboard-api-key not provided"
 fi
