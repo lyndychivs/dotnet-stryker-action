@@ -8,24 +8,14 @@ branding:
 
 inputs:
   configurationFile:
-    description: "The name of the Stryker.NET configuration file (must be in the root of the repository)."
+    description: "The path of the Stryker.NET configuration file."
     required: true
-    default: "stryker-config.json"
 
   dashboardApiKey:
     description: "The API key for authentication with the Stryker dashboard."
     required: false
     default: ""
 
-  version:
-    description: "The version of the report. This should be filled with the branch name, git tag or git sha."
-    required: false
-    default: ""
-    
 runs:
   using: "docker"
   image: "Dockerfile"
-  args:
-    - ${{ inputs.configurationFile }}
-    - ${{ inputs.dashboardApiKey }}
-    - ${{ inputs.version }}

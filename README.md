@@ -12,9 +12,8 @@ dotnet stryker init
 ### Parameters
 | Argument            | Description | Default | Required |
 | :---                | :---        | :---    | :---     |
-| `configurationFile` | File path of the Stryker.NET configuration file. | `stryker-config.json` | Yes |
+| `configurationFile` | Path of the Stryker.NET configuration file. | — | Yes |
 | `dashboardApiKey`   | API key for authentication with the Stryker dashboard. | — | No |
-| `version`           | Version of the report.<br/>This should be filled with the branch Name, git Tag or git SHA. | — | No |
 
 #### Example 1
 ```yml
@@ -53,5 +52,4 @@ jobs:
         with:
           configurationFile: "stryker-config.json"
           dashboardApiKey: ${{ secrets.STRYKER_DASHBOARD }} # API key saved in Secrets
-          version: ${{ github.ref_name }} # example 'master' or 'main'
 ```
