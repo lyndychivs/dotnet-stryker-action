@@ -2,12 +2,7 @@
 
 ## Supported Versions
 
-| Version | Supported          |
-| ------- | ------------------ |
-| v1.4    | :white_check_mark: |
-| v1.3    | :x:                |
-| v1.2    | :x:                |
-| v1.1    | :x:                |
+Only the latest version is supported.
 
 ## Reporting a Vulnerability
 
