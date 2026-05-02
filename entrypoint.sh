@@ -14,4 +14,4 @@ else
    echo "dashboard-api-key: not provided"
 fi
 
-dotnet stryker "$@"
+dotnet-stryker "$@"
