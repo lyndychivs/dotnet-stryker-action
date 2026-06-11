@@ -12,6 +12,6 @@ COPY --from=dotnet10 /usr/share/dotnet /usr/share/dotnet
 
 COPY --chmod=755 entrypoint.sh /entrypoint.sh
 
-RUN dotnet tool install -g dotnet-stryker --version 4.14.1
+RUN dotnet tool install -g dotnet-stryker --version 4.14.2
 
 ENTRYPOINT ["/entrypoint.sh"]
