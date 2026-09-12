@@ -27,7 +27,8 @@ dotnet stryker init
 | :--- | :--- | :--- | :--- |
 | `configFile` | Path to the Stryker.NET config file. This matches the CLI flag `--config-file`. Leave empty to let Stryker use its default config discovery. | `""` | No |
 | `configurationFile` | Deprecated alias for `configFile`. Kept for backward compatibility. | `""` | No |
-| `cliArgs` | Additional shell-style CLI arguments appended last to `dotnet-stryker`. | `""` | No |
+| `strykerArgs` | Additional raw Stryker CLI arguments appended last to `dotnet-stryker`. | `""` | No |
+| `cliArgs` | Deprecated alias for `strykerArgs`. Kept for backward compatibility. | `""` | No |
 | `reporters` | Comma-separated reporters translated to repeated `--reporter` flags. | `""` | No |
 | `output` | Output directory passed to `--output`. | `""` | No |
 | `thresholdHigh` | Passed to `--threshold-high`. | `""` | No |
@@ -55,17 +56,17 @@ The action builds the Stryker command in this order:
 
 1. `--config-file <configFile>` when a file path is provided
 2. Curated action inputs such as thresholds, reporters, output, and verbosity
-3. `cliArgs` appended last
+3. `strykerArgs` appended last
 
 This means:
 
 - the config file defines the baseline behavior when present
 - convenience inputs provide common workflow overrides
-- `cliArgs` is the advanced escape hatch and final override mechanism
+- `strykerArgs` is the advanced escape hatch and final override mechanism
 - when `configFile` is omitted, the action intentionally skips `--config-file` and lets Stryker use its default config discovery
 
 ## Capability matrix
-| Capability | Action input | Config file | `cliArgs` |
+| Capability | Action input | Config file | `strykerArgs` |
 | :--- | :---: | :---: | :---: |
 | Choose config file | Yes | No | Yes |
 | Dashboard API key | No - use environment | Yes | Yes |
@@ -174,7 +175,7 @@ jobs:
           since: "origin/main"
 ```
 
-### Example 5 - use `cliArgs` as the escape hatch
+### Example 5 - use `strykerArgs` as the escape hatch
 ```yml
 name: Run Stryker.NET with advanced options
 
@@ -191,7 +192,7 @@ jobs:
         uses: lyndychivs/dotnet-stryker-action@v1.8
         with:
           configFile: "stryker-config.json"
-          cliArgs: >-
+          strykerArgs: >-
             --break-on-initial-test-failure
             --log-to-file
             --report-file-name mutation-report
@@ -200,7 +201,7 @@ jobs:
 ## Notes
 
 - If both the config file and action inputs specify the same setting, the generated CLI arguments win.
-- `cliArgs` is appended last and therefore has the highest precedence.
+- `strykerArgs` is appended last and therefore has the highest precedence.
 - Generated outputs depend on the reports Stryker actually writes during the run.
 - For the best step-summary experience, include the `markdown` reporter.
 ```

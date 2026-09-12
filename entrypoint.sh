@@ -220,10 +220,12 @@ if [ -n "${INPUT_VERBOSITY:-}" ]; then
   set -- "$@" --verbosity "${INPUT_VERBOSITY}"
 fi
 
-if [ -n "${INPUT_CLIARGS:-}" ]; then
+stryker_args="${INPUT_STRYKERARGS:-${INPUT_CLIARGS:-}}"
+
+if [ -n "${stryker_args}" ]; then
   # Intentionally allow shell-style splitting and quoting for advanced caller-controlled overrides.
   # shellcheck disable=SC2086
-  eval "set -- \"\$@\" ${INPUT_CLIARGS}"
+  eval "set -- \"\$@\" ${stryker_args}"
 fi
 
 if is_true "${INPUT_SHOWEFFECTIVECOMMAND:-false}"; then

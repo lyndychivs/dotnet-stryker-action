@@ -17,8 +17,13 @@ inputs:
     required: false
     default: ""
 
+  strykerArgs:
+    description: "Additional Stryker CLI arguments appended last to the dotnet-stryker command."
+    required: false
+    default: ""
+
   cliArgs:
-    description: "Additional shell-style arguments appended last to the dotnet-stryker command."
+    description: "Deprecated alias for strykerArgs. Prefer strykerArgs for clarity."
     required: false
     default: ""
 
