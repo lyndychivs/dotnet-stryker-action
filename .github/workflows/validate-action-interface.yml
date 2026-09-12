@@ -38,7 +38,7 @@ jobs:
         id: stryker
         uses: ./
         with:
-          configurationFile: tests/stryker-config.json
+          configFile: tests/stryker-config.json
           reporters: markdown,json
           verbosity: info
           cliArgs: --break-on-initial-test-failure

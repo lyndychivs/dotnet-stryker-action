@@ -25,7 +25,8 @@ dotnet stryker init
 ## Inputs
 | Input | Description | Default | Required |
 | :--- | :--- | :--- | :--- |
-| `configurationFile` | Path to the Stryker.NET configuration file. Leave empty to let Stryker use its default config discovery. | `""` | No |
+| `configFile` | Path to the Stryker.NET config file. This matches the CLI flag `--config-file`. Leave empty to let Stryker use its default config discovery. | `""` | No |
+| `configurationFile` | Deprecated alias for `configFile`. Kept for backward compatibility. | `""` | No |
 | `cliArgs` | Additional shell-style CLI arguments appended last to `dotnet-stryker`. | `""` | No |
 | `reporters` | Comma-separated reporters translated to repeated `--reporter` flags. | `""` | No |
 | `output` | Output directory passed to `--output`. | `""` | No |
@@ -52,7 +53,7 @@ dotnet stryker init
 
 The action builds the Stryker command in this order:
 
-1. `--config-file <configurationFile>` when a file path is provided
+1. `--config-file <configFile>` when a file path is provided
 2. Curated action inputs such as thresholds, reporters, output, and verbosity
 3. `cliArgs` appended last
 
@@ -61,7 +62,7 @@ This means:
 - the config file defines the baseline behavior when present
 - convenience inputs provide common workflow overrides
 - `cliArgs` is the advanced escape hatch and final override mechanism
-- when `configurationFile` is omitted, the action intentionally skips `--config-file` and lets Stryker use its default config discovery
+- when `configFile` is omitted, the action intentionally skips `--config-file` and lets Stryker use its default config discovery
 
 ## Capability matrix
 | Capability | Action input | Config file | `cliArgs` |
@@ -101,7 +102,7 @@ jobs:
       - name: Run Stryker.NET against Repository
         uses: lyndychivs/dotnet-stryker-action@v1.8
         with:
-          configurationFile: "stryker-config.json"
+          configFile: "stryker-config.json"
 ```
 
 ### Example 2 - dashboard authentication via environment
@@ -123,7 +124,7 @@ jobs:
         env:
           STRYKER_DASHBOARD_API_KEY: ${{ secrets.STRYKER_DASHBOARD_API_KEY }}
         with:
-          configurationFile: "stryker-config.json"
+          configFile: "stryker-config.json"
 ```
 
 ### Example 3 - common CI overrides without editing the config file
@@ -143,7 +144,7 @@ jobs:
         id: stryker
         uses: lyndychivs/dotnet-stryker-action@v1.8
         with:
-          configurationFile: "stryker-config.json"
+          configFile: "stryker-config.json"
           reporters: "markdown,json"
           thresholdHigh: "85"
           thresholdLow: "70"
@@ -169,7 +170,7 @@ jobs:
       - name: Run Stryker.NET against changes since main
         uses: lyndychivs/dotnet-stryker-action@v1.8
         with:
-          configurationFile: "stryker-config.json"
+          configFile: "stryker-config.json"
           since: "origin/main"
 ```
 
@@ -189,7 +190,7 @@ jobs:
       - name: Run Stryker.NET with extra CLI options
         uses: lyndychivs/dotnet-stryker-action@v1.8
         with:
-          configurationFile: "stryker-config.json"
+          configFile: "stryker-config.json"
           cliArgs: >-
             --break-on-initial-test-failure
             --log-to-file

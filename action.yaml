@@ -7,8 +7,13 @@ branding:
   color: "red"
 
 inputs:
-  configurationFile:
+  configFile:
     description: "The path of the Stryker.NET configuration file. Optional; Stryker will use default config discovery when omitted."
+    required: false
+    default: ""
+
+  configurationFile:
+    description: "Deprecated alias for configFile. Prefer configFile to match the Stryker --config-file flag."
     required: false
     default: ""
 

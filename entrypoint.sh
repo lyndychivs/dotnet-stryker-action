@@ -142,7 +142,7 @@ print_effective_command() {
   printf '\n'
 }
 
-configuration_file="${INPUT_CONFIGURATIONFILE:-}"
+configuration_file="${INPUT_CONFIGFILE:-${INPUT_CONFIGURATIONFILE:-}}"
 
 if [ -n "${configuration_file}" ]; then
   if [ ! -f "${configuration_file}" ]; then
