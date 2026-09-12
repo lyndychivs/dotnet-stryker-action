@@ -23,20 +23,20 @@ dotnet stryker init
 ```
 
 ## Inputs
-| Input | Description | Default | Required |
-| :--- | :--- | :--- | :--- |
-| `configFile` | Path to the Stryker.NET config file. This matches the CLI flag `--config-file`. Leave empty to let Stryker use its default config discovery. | `""` | No |
-| `strykerArgs` | Additional raw Stryker CLI arguments appended last to `dotnet-stryker`. | `""` | No |
-| `reporters` | Comma-separated reporters translated to repeated `--reporter` flags. | `""` | No |
-| `output` | Output directory passed to `--output`. | `""` | No |
-| `thresholdHigh` | Passed to `--threshold-high`. | `""` | No |
-| `thresholdLow` | Passed to `--threshold-low`. | `""` | No |
-| `breakAt` | Passed to `--break-at`. | `""` | No |
-| `since` | Use `true` for `--since`, or provide a committish for `--since:<target>`. | `""` | No |
-| `withBaseline` | Use `true` for `--with-baseline`, or provide a committish for `--with-baseline:<target>`. | `""` | No |
-| `verbosity` | Passed to `--verbosity`. Supported values follow the Stryker CLI: `error`, `warning`, `info`, `debug`, `trace`. | `""` | No |
-| `showEffectiveCommand` | When `true`, print the assembled `dotnet-stryker` command with secret values redacted. | `"false"` | No |
-| `writeStepSummary` | When `true`, publish a GitHub step summary from generated report artifacts when available. | `"true"` | No |
+| Input | Description | Default |
+| :--- | :--- | :--- |
+| `configFile` | Path to the Stryker.NET config file. This matches the CLI flag `--config-file`. Leave empty to let Stryker use its default config discovery. | `""` |
+| `strykerArgs` | Additional raw Stryker CLI arguments appended last to `dotnet-stryker`. | `""` |
+| `reporters` | Comma-separated reporters translated to repeated `--reporter` flags. | `""` |
+| `output` | Output directory passed to `--output`. | `""` |
+| `thresholdHigh` | Passed to `--threshold-high`. | `""` |
+| `thresholdLow` | Passed to `--threshold-low`. | `""` |
+| `breakAt` | Passed to `--break-at`. | `""` |
+| `since` | Use `true` for `--since`, or provide a committish for `--since:<target>`. | `""` |
+| `withBaseline` | Use `true` for `--with-baseline`, or provide a committish for `--with-baseline:<target>`. | `""` |
+| `verbosity` | Passed to `--verbosity`. Supported values follow the Stryker CLI: `error`, `warning`, `info`, `debug`, `trace`. | `""` |
+| `showEffectiveCommand` | When `true`, print the assembled `dotnet-stryker` command with secret values redacted. | `"false"` |
+| `writeStepSummary` | When `true`, publish a GitHub step summary from generated report artifacts when available. | `"true"` |
 
 ## Outputs
 | Output | Description |
