@@ -1,17 +1,19 @@
 namespace Sample.Unit.Tests;
 
+using NUnit.Framework;
+
 public class CalculatorTests
 {
     [Test]
-    public void Add_WithTwoPositiveNumbers_ReturnsFive()
+    public void Add_WithTwoPositiveNumbers_ReturnsThree()
     {
-        Assert.That(Calculator.Add(2, 3), Is.EqualTo(5));
+        Assert.That(Calculator.Add(1, 2), Is.EqualTo(3));
     }
 
     [Test]
-    public void Add_WithPositiveAndNegativeNumbers_ReturnsOne()
+    public void Add_WithPositiveAndNegativeNumbers_ReturnsZero()
     {
-        Assert.That(Calculator.Add(3, -2), Is.EqualTo(1));
+        Assert.That(Calculator.Add(1, -1), Is.EqualTo(0));
     }
 
     [Test]
@@ -21,8 +23,8 @@ public class CalculatorTests
     }
 
     [Test]
-    public void Add_WithTwoNegativeNumbers_ReturnsNegativeFive()
+    public void Add_WithTwoNegativeNumbers_ReturnsNegativeThree()
     {
-        Assert.That(Calculator.Add(-2, -3), Is.EqualTo(-5));
+        Assert.That(Calculator.Add(-1, -2), Is.EqualTo(-3));
     }
 }

@@ -1,7 +1,5 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
   <ItemGroup>
     <InternalsVisibleTo Include="Sample.Unit.Tests" />
   </ItemGroup>
-
 </Project>
