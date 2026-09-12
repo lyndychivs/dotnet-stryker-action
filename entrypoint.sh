@@ -34,6 +34,10 @@ append_summary() {
   fi
 }
 
+detect_stryker_version() {
+  dotnet tool list -g 2>/dev/null | awk '$1 == "dotnet-stryker" { print $2; exit }'
+}
+
 find_first_report() {
   report_dir="$1"
   pattern="$2"
@@ -158,7 +162,12 @@ else
   echo "dashboard-api-key: not provided"
 fi
 
-echo "dotnet-stryker-version: $(dotnet-stryker --version)"
+stryker_version=$(detect_stryker_version)
+if [ -n "${stryker_version}" ]; then
+  echo "dotnet-stryker-version: ${stryker_version}"
+else
+  echo "dotnet-stryker-version: unknown"
+fi
 
 set -- --config-file "${configuration_file}"
 

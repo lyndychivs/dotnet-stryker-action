@@ -17,70 +17,28 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v7
 
-      - name: Create sample solution
+      - name: Verify checked-in sample solution
         shell: bash
         run: |
           set -euo pipefail
+          test -f tests/Sample.sln
+          test -f tests/Sample/Sample.csproj
+          test -f tests/Sample/Calculator.cs
+          test -f tests/Sample.Unit.Tests/Sample.Unit.Tests.csproj
+          test -f tests/Sample.Unit.Tests/CalculatorTests.cs
+          test -f tests/stryker-config.json
 
-          mkdir sample
-          cd sample
-
-          dotnet new sln --name Sample
-          dotnet new classlib --name Calculator
-          dotnet new xunit --name Calculator.Tests
-
-          dotnet sln add Calculator/Calculator.csproj
-          dotnet sln add Calculator.Tests/Calculator.Tests.csproj
-          dotnet add Calculator.Tests/Calculator.Tests.csproj reference Calculator/Calculator.csproj
-
-          cat <<'EOF' > Calculator/Class1.cs
-          namespace Calculator;
-
-          public class Class1
-          {
-              public int Add(int left, int right) => left + right;
-          }
-          EOF
-
-          cat <<'EOF' > Calculator.Tests/UnitTest1.cs
-          namespace Calculator.Tests;
-
-          public class UnitTest1
-          {
-              [Fact]
-              public void Add_returns_sum()
-              {
-                  var sut = new global::Calculator.Class1();
-                  Assert.Equal(4, sut.Add(2, 2));
-              }
-          }
-          EOF
-
-          cat <<'EOF' > stryker-config.json
-          {
-            "stryker-config": {
-              "solution": "Sample.sln",
-              "test-projects": [
-                "Calculator.Tests/Calculator.Tests.csproj"
-              ],
-              "project": "Calculator.csproj",
-              "mutate": [
-                "Calculator/Class1.cs"
-              ],
-              "thresholds": {
-                "high": 80,
-                "low": 60,
-                "break": 0
-              }
-            }
-          }
-          EOF
+      - name: Run sample tests
+        shell: bash
+        run: |
+          set -euo pipefail
+          dotnet test tests/Sample.sln --configuration Release
 
       - name: Run local action
         id: stryker
         uses: ./
         with:
-          configurationFile: sample/stryker-config.json
+          configurationFile: tests/stryker-config.json
           reporters: markdown,json
           verbosity: info
           cliArgs: --break-on-initial-test-failure
