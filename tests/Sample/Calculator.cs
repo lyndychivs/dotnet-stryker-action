@@ -1,6 +1,9 @@
 namespace Sample;
 
-public class Calculator
+internal static class Calculator
 {
-    public int Add(int left, int right) => left + right;
+    public static int Add(int left, int right)
+    {
+        return left + right;
+    }
 }
