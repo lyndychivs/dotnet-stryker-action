@@ -5,9 +5,6 @@
       "tests/Sample.Unit.Tests/Sample.Unit.Tests.csproj"
     ],
     "project": "Sample.csproj",
-    "mutate": [
-      "tests/Sample/Calculator.cs"
-    ],
     "thresholds": {
       "high": 80,
       "low": 60,
