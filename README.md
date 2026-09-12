@@ -26,9 +26,7 @@ dotnet stryker init
 | Input | Description | Default | Required |
 | :--- | :--- | :--- | :--- |
 | `configFile` | Path to the Stryker.NET config file. This matches the CLI flag `--config-file`. Leave empty to let Stryker use its default config discovery. | `""` | No |
-| `configurationFile` | Deprecated alias for `configFile`. Kept for backward compatibility. | `""` | No |
 | `strykerArgs` | Additional raw Stryker CLI arguments appended last to `dotnet-stryker`. | `""` | No |
-| `cliArgs` | Deprecated alias for `strykerArgs`. Kept for backward compatibility. | `""` | No |
 | `reporters` | Comma-separated reporters translated to repeated `--reporter` flags. | `""` | No |
 | `output` | Output directory passed to `--output`. | `""` | No |
 | `thresholdHigh` | Passed to `--threshold-high`. | `""` | No |

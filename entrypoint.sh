@@ -142,7 +142,7 @@ print_effective_command() {
   printf '\n'
 }
 
-configuration_file="${INPUT_CONFIGFILE:-${INPUT_CONFIGURATIONFILE:-}}"
+configuration_file="${INPUT_CONFIGFILE:-}"
 
 if [ -n "${configuration_file}" ]; then
   if [ ! -f "${configuration_file}" ]; then
@@ -220,7 +220,7 @@ if [ -n "${INPUT_VERBOSITY:-}" ]; then
   set -- "$@" --verbosity "${INPUT_VERBOSITY}"
 fi
 
-stryker_args="${INPUT_STRYKERARGS:-${INPUT_CLIARGS:-}}"
+stryker_args="${INPUT_STRYKERARGS:-}"
 
 if [ -n "${stryker_args}" ]; then
   # Intentionally allow shell-style splitting and quoting for advanced caller-controlled overrides.

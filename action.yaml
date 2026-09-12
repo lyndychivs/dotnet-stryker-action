@@ -12,18 +12,8 @@ inputs:
     required: false
     default: ""
 
-  configurationFile:
-    description: "Deprecated alias for configFile. Prefer configFile to match the Stryker --config-file flag."
-    required: false
-    default: ""
-
   strykerArgs:
     description: "Additional Stryker CLI arguments appended last to the dotnet-stryker command."
-    required: false
-    default: ""
-
-  cliArgs:
-    description: "Deprecated alias for strykerArgs. Prefer strykerArgs for clarity."
     required: false
     default: ""
 
