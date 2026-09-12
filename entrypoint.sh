@@ -226,7 +226,7 @@ dotnet-stryker "$@"
 exit_code=$?
 set -e
 
-report_dir=$(find_latest_report_dir || true)
+report_dir=$(find_latest_report_dir)
 html_report=""
 json_report=""
 markdown_report=""
