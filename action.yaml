@@ -11,10 +11,74 @@ inputs:
     description: "The path of the Stryker.NET configuration file."
     required: true
 
-  dashboardApiKey:
-    description: "The API key for authentication with the Stryker dashboard."
+  cliArgs:
+    description: "Additional shell-style arguments appended last to the dotnet-stryker command."
     required: false
     default: ""
+
+  reporters:
+    description: "Comma-separated list of reporter values to pass as repeated --reporter flags."
+    required: false
+    default: ""
+
+  output:
+    description: "Output directory passed to --output."
+    required: false
+    default: ""
+
+  thresholdHigh:
+    description: "Mutation score high threshold passed to --threshold-high."
+    required: false
+    default: ""
+
+  thresholdLow:
+    description: "Mutation score low threshold passed to --threshold-low."
+    required: false
+    default: ""
+
+  breakAt:
+    description: "Mutation score break threshold passed to --break-at."
+    required: false
+    default: ""
+
+  since:
+    description: "Enable --since. Use true for the default behavior or provide a committish target."
+    required: false
+    default: ""
+
+  withBaseline:
+    description: "Enable --with-baseline. Use true for the default behavior or provide a committish target."
+    required: false
+    default: ""
+
+  verbosity:
+    description: "Log verbosity passed to --verbosity."
+    required: false
+    default: ""
+
+  showEffectiveCommand:
+    description: "When true, print the assembled dotnet-stryker command with secret values redacted."
+    required: false
+    default: "false"
+
+  writeStepSummary:
+    description: "When true, write a GitHub step summary from generated report artifacts when available."
+    required: false
+    default: "true"
+
+outputs:
+  mutationScore:
+    description: "The final mutation score percentage when it could be derived from generated reports."
+  thresholdStatus:
+    description: "Threshold evaluation result: passed, failed, or empty when it could not be derived."
+  reportDirectory:
+    description: "The latest Stryker reports directory if one was generated."
+  htmlReportPath:
+    description: "Path to the generated HTML report when present."
+  jsonReportPath:
+    description: "Path to the generated JSON report when present."
+  markdownSummaryPath:
+    description: "Path to the generated Markdown summary report when present."
 
 runs:
   using: "docker"
