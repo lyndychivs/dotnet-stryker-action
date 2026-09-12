@@ -8,8 +8,9 @@ branding:
 
 inputs:
   configurationFile:
-    description: "The path of the Stryker.NET configuration file."
-    required: true
+    description: "The path of the Stryker.NET configuration file. Optional; Stryker will use default config discovery when omitted."
+    required: false
+    default: ""
 
   cliArgs:
     description: "Additional shell-style arguments appended last to the dotnet-stryker command."

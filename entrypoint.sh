@@ -144,17 +144,16 @@ print_effective_command() {
 
 configuration_file="${INPUT_CONFIGURATIONFILE:-}"
 
-if [ -z "${configuration_file}" ]; then
-  echo "configurationFile input is required." >&2
-  exit 1
-fi
+if [ -n "${configuration_file}" ]; then
+  if [ ! -f "${configuration_file}" ]; then
+    echo "Configuration file not found: ${configuration_file}" >&2
+    exit 1
+  fi
 
-if [ ! -f "${configuration_file}" ]; then
-  echo "Configuration file not found: ${configuration_file}" >&2
-  exit 1
+  echo "config-file: ${configuration_file}"
+else
+  echo "config-file: not provided; using Stryker default configuration discovery"
 fi
-
-echo "config-file: ${configuration_file}"
 
 if [ -n "${STRYKER_DASHBOARD_API_KEY:-}" ]; then
   echo "dashboard-api-key: provided via environment"
@@ -169,7 +168,9 @@ else
   echo "dotnet-stryker-version: unknown"
 fi
 
-set -- --config-file "${configuration_file}"
+if [ -n "${configuration_file}" ]; then
+  set -- --config-file "${configuration_file}"
+fi
 
 if [ -n "${INPUT_REPORTERS:-}" ]; then
   old_ifs=$IFS
