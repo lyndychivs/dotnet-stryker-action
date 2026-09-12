@@ -34,10 +34,6 @@ append_summary() {
   fi
 }
 
-detect_stryker_version() {
-  dotnet tool list -g 2>/dev/null | awk '$1 == "dotnet-stryker" { print $2; exit }'
-}
-
 find_first_report() {
   report_dir="$1"
   pattern="$2"
@@ -161,13 +157,6 @@ else
   echo "dashboard-api-key: not provided"
 fi
 
-stryker_version=$(detect_stryker_version)
-if [ -n "${stryker_version}" ]; then
-  echo "dotnet-stryker-version: ${stryker_version}"
-else
-  echo "dotnet-stryker-version: unknown"
-fi
-
 if [ -n "${configuration_file}" ]; then
   set -- --config-file "${configuration_file}"
 fi
@@ -176,9 +165,9 @@ if [ -n "${INPUT_REPORTERS:-}" ]; then
   old_ifs=$IFS
   IFS=','
   for reporter in ${INPUT_REPORTERS}; do
-    reporter_value=$(trim "${reporter}")
-    if [ -n "${reporter_value}" ]; then
-      set -- "$@" --reporter "${reporter_value}"
+    reporter=$(trim "${reporter}")
+    if [ -n "${reporter}" ]; then
+      set -- "$@" --reporter "${reporter}"
     fi
   done
   IFS=$old_ifs
