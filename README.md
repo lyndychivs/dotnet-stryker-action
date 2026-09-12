@@ -25,7 +25,7 @@ dotnet stryker init
 ## Inputs
 | Input | Description | Default | Required |
 | :--- | :--- | :--- | :--- |
-| `configurationFile` | Path to the Stryker.NET configuration file. | — | Yes |
+| `configurationFile` | Path to the Stryker.NET configuration file. Leave empty to let Stryker use its default config discovery. | `""` | No |
 | `cliArgs` | Additional shell-style CLI arguments appended last to `dotnet-stryker`. | `""` | No |
 | `reporters` | Comma-separated reporters translated to repeated `--reporter` flags. | `""` | No |
 | `output` | Output directory passed to `--output`. | `""` | No |
@@ -34,7 +34,7 @@ dotnet stryker init
 | `breakAt` | Passed to `--break-at`. | `""` | No |
 | `since` | Use `true` for `--since`, or provide a committish for `--since:<target>`. | `""` | No |
 | `withBaseline` | Use `true` for `--with-baseline`, or provide a committish for `--with-baseline:<target>`. | `""` | No |
-| `verbosity` | Passed to `--verbosity`. | `""` | No |
+| `verbosity` | Passed to `--verbosity`. Supported values follow the Stryker CLI: `error`, `warning`, `info`, `debug`, `trace`. | `""` | No |
 | `showEffectiveCommand` | When `true`, print the assembled `dotnet-stryker` command with secret values redacted. | `"false"` | No |
 | `writeStepSummary` | When `true`, publish a GitHub step summary from generated report artifacts when available. | `"true"` | No |
 
@@ -52,15 +52,16 @@ dotnet stryker init
 
 The action builds the Stryker command in this order:
 
-1. `--config-file <configurationFile>`
+1. `--config-file <configurationFile>` when a file path is provided
 2. Curated action inputs such as thresholds, reporters, output, and verbosity
 3. `cliArgs` appended last
 
 This means:
 
-- the config file defines the baseline behavior
+- the config file defines the baseline behavior when present
 - convenience inputs provide common workflow overrides
 - `cliArgs` is the advanced escape hatch and final override mechanism
+- when `configurationFile` is omitted, the action intentionally skips `--config-file` and lets Stryker use its default config discovery
 
 ## Capability matrix
 | Capability | Action input | Config file | `cliArgs` |
