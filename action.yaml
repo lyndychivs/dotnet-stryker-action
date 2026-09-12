@@ -69,17 +69,17 @@ inputs:
 
 outputs:
   mutationScore:
-    description: "The final mutation score percentage when it could be derived from generated reports."
+    description: "The final mutation score percentage derived from the generated Stryker report when it is available."
   thresholdStatus:
-    description: "Threshold evaluation result: passed, failed, or empty when it could not be derived."
+    description: "Threshold evaluation result: passed, failed, or empty when Stryker did not produce a comparable break-threshold result."
   reportDirectory:
-    description: "The latest Stryker reports directory if one was generated."
+    description: "Path to the latest Stryker reports directory generated under the configured output location."
   htmlReportPath:
-    description: "Path to the generated HTML report when present."
+    description: "Path to the generated HTML report when Stryker writes one."
   jsonReportPath:
-    description: "Path to the generated JSON report when present."
+    description: "Path to the generated JSON report when Stryker writes one."
   markdownSummaryPath:
-    description: "Path to the generated Markdown summary report when present."
+    description: "Path to the generated Markdown summary report when Stryker writes one."
 
 runs:
   using: "docker"

@@ -41,12 +41,12 @@ dotnet stryker init
 ## Outputs
 | Output | Description |
 | :--- | :--- |
-| `mutationScore` | Final mutation score percentage when it could be derived from generated reports. |
-| `thresholdStatus` | `passed`, `failed`, or empty when it could not be derived. |
-| `reportDirectory` | Latest generated Stryker reports directory. |
-| `htmlReportPath` | Generated HTML report path when present. |
-| `jsonReportPath` | Generated JSON report path when present. |
-| `markdownSummaryPath` | Generated Markdown summary report path when present. |
+| `mutationScore` | Final mutation score percentage derived from the generated Stryker report when it is available. |
+| `thresholdStatus` | `passed`, `failed`, or empty when Stryker did not produce a comparable break-threshold result. |
+| `reportDirectory` | Path to the latest Stryker reports directory generated under the configured output location. |
+| `htmlReportPath` | Path to the generated HTML report when Stryker writes one. |
+| `jsonReportPath` | Path to the generated JSON report when Stryker writes one. |
+| `markdownSummaryPath` | Path to the generated Markdown summary report when Stryker writes one. |
 
 ## Precedence rules
 
