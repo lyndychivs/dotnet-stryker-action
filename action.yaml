@@ -8,7 +8,7 @@ branding:
 
 inputs:
   configFile:
-    description: "The path of the Stryker.NET configuration file. Optional; Stryker will use default config discovery when omitted."
+    description: "Choose the file containing your Stryker configuration. Supports json and yaml formats. Optional; Stryker falls back to stryker-config.json when omitted."
     required: false
     default: ""
 
@@ -18,42 +18,42 @@ inputs:
     default: ""
 
   reporters:
-    description: "Comma-separated list of reporter values to pass as repeated --reporter flags."
+    description: "Reporters inform about various stages in the mutation test run. Provide a comma-separated list that becomes repeated --reporter flags."
     required: false
     default: ""
 
   output:
-    description: "Output directory passed to --output."
+    description: "Changes the output path for Stryker logs and reports. This can be an absolute or relative path."
     required: false
     default: ""
 
   thresholdHigh:
-    description: "Mutation score high threshold passed to --threshold-high."
+    description: "Minimum good mutation score. Must be higher than or equal to threshold low. Allowed values: 0 - 100."
     required: false
     default: ""
 
   thresholdLow:
-    description: "Mutation score low threshold passed to --threshold-low."
+    description: "Minimum acceptable mutation score. Must be less than or equal to threshold high and more than or equal to threshold break. Allowed values: 0 - 100."
     required: false
     default: ""
 
   breakAt:
-    description: "Mutation score break threshold passed to --break-at."
+    description: "Anything below this mutation score will return a non-zero exit code. Must be less than or equal to threshold low. Allowed values: 0 - 100."
     required: false
     default: ""
 
   since:
-    description: "Enable --since. Use true for the default behavior or provide a committish target."
+    description: "Enables diff compare. Only test changed files. Use true for the default behavior or provide a committish target as --since:<committish>."
     required: false
     default: ""
 
   withBaseline:
-    description: "Enable --with-baseline. Use true for the default behavior or provide a committish target."
+    description: "EXPERIMENTAL: Use results stored in the Stryker dashboard to only test new mutants. Use true for the default behavior or provide a committish target as --with-baseline:<committish>."
     required: false
     default: ""
 
   verbosity:
-    description: "Log verbosity passed to --verbosity."
+    description: "The verbosity for output to the console. Allowed values: error, warning, info, debug, trace."
     required: false
     default: ""
 
