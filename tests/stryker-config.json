@@ -1,6 +1,6 @@
 {
   "stryker-config": {
-    "solution": "tests/Sample.sln",
+    "solution": "tests/Sample.slnx",
     "test-projects": [
       "tests/Sample.Unit.Tests/Sample.Unit.Tests.csproj"
     ],
