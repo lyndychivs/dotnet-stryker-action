@@ -38,11 +38,6 @@ find_first_report() {
 }
 
 find_latest_report_dir() {
-  if [ -n "${INPUT_OUTPUT:-}" ] && [ -d "${INPUT_OUTPUT}" ]; then
-    find "${INPUT_OUTPUT}" -type d -name reports | sort | tail -n 1
-    return 0
-  fi
-
   find . -type d -name reports -path '*/StrykerOutput/*/reports' | sort | tail -n 1
 }
 
@@ -166,28 +161,35 @@ write_output "jsonReportPath" "${json_report}"
 write_output "markdownSummaryPath" "${markdown_report}"
 
 if is_true "${INPUT_WRITESTEPSUMMARY:-true}" && [ -n "${GITHUB_STEP_SUMMARY:-}" ]; then
-  append_summary "## Stryker.NET run"
+  if [ "${threshold_status}" = "passed" ]; then
+    append_summary "## Stryker.NET run ✅ Passed"
+  else
+    append_summary "## Stryker.NET run ❌ Failed"
+  fi
   append_summary ""
-  append_summary "- Exit code: \`${exit_code}\`"
 
   if [ -n "${mutation_score}" ]; then
     append_summary "- Mutation score: **${mutation_score}**"
+  else
+    append_summary "- Mutation score: _not available (no report found)_"
   fi
 
-  if [ -n "${threshold_status}" ]; then
-    append_summary "- Threshold status: **${threshold_status}**"
-  fi
+  append_summary "- Exit code: \`${exit_code}\`"
 
   if [ -n "${report_dir}" ]; then
     append_summary "- Report directory: \`${report_dir}\`"
+  else
+    append_summary "- Report directory: _not found_"
   fi
 
   if [ -n "${markdown_report}" ] && [ -f "${markdown_report}" ]; then
     append_summary ""
-    append_summary "### Markdown summary report"
+    append_summary "<details>"
+    append_summary "<summary>Markdown summary report</summary>"
     append_summary ""
     cat "${markdown_report}" >> "${GITHUB_STEP_SUMMARY}"
     append_summary ""
+    append_summary "</details>"
   fi
 fi
 
