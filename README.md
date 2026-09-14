@@ -22,6 +22,10 @@ env:
 dotnet stryker init
 ```
 
+### Runtime
+
+The action's Docker image runs on the .NET 10 SDK.
+
 ## Inputs
 | Input | Description | Default |
 | :--- | :--- | :--- |

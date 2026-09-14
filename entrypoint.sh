@@ -54,11 +54,6 @@ detect_mutation_score() {
   markdown_report="$1"
   json_report="$2"
 
-  if [ -n "${markdown_report}" ] && [ -f "${markdown_report}" ]; then
-    sed -n 's/.*final mutation score is \([0-9.][0-9.]*%\).*/\1/p' "${markdown_report}" | tail -n 1
-    return 0
-  fi
-
   if [ -n "${json_report}" ] && [ -f "${json_report}" ]; then
     score_value=$(sed -n 's/.*"mutationScore"[[:space:]]*:[[:space:]]*\([0-9.][0-9.]*\).*/\1/p' "${json_report}" | head -n 1)
     if [ -n "${score_value}" ]; then
@@ -67,11 +62,21 @@ detect_mutation_score() {
     fi
   fi
 
+  if [ -n "${markdown_report}" ] && [ -f "${markdown_report}" ]; then
+    sed -n 's/.*final mutation score is \([0-9.][0-9.]*%\).*/\1/p' "${markdown_report}" | tail -n 1
+    return 0
+  fi
+
   printf '\n'
 }
 
 detect_break_threshold() {
   markdown_report="$1"
+
+  if [ -n "${INPUT_BREAKAT:-}" ]; then
+    printf '%s\n' "${INPUT_BREAKAT}"
+    return 0
+  fi
 
   if [ -n "${markdown_report}" ] && [ -f "${markdown_report}" ]; then
     threshold_value=$(sed -n 's/.*Coverage Thresholds:.*break: \([0-9.][0-9.]*\).*/\1/p' "${markdown_report}" | tail -n 1)
@@ -79,11 +84,6 @@ detect_break_threshold() {
       printf '%s\n' "${threshold_value}"
       return 0
     fi
-  fi
-
-  if [ -n "${INPUT_BREAKAT:-}" ]; then
-    printf '%s\n' "${INPUT_BREAKAT}"
-    return 0
   fi
 
   printf '\n'
@@ -125,9 +125,6 @@ print_effective_command() {
         ;;
       --dashboard-api-key=*)
         printf " '--dashboard-api-key=[REDACTED]'"
-        ;;
-      STRYKER_DASHBOARD_API_KEY=*)
-        printf " 'STRYKER_DASHBOARD_API_KEY=[REDACTED]'"
         ;;
       *)
         printf ' %s' "$(quote_arg "${arg}")"
