@@ -6,22 +6,12 @@ This action is a thin Stryker.NET wrapper with a small convenience layer for com
 
 Consumers should treat the [Stryker.NET configuration](https://stryker-mutator.io/docs/stryker-net/configuration) file as the primary source of truth, then use `strykerArgs` for workflow-specific overrides.
 
-### Breaking change
-
-Only `configFile`, `strykerArgs`, `showEffectiveCommand`, and `writeStepSummary` remain as action inputs. The curated per-flag inputs (`reporters`, `output`, `thresholdHigh`, `thresholdLow`, `breakAt`, `since`, `withBaseline`, `verbosity`) have been removed — they only translated to `dotnet-stryker` flags without adding any validation of their own, since Stryker validates its own arguments when it runs. Express them through `strykerArgs` (or your config file) instead:
+Only `configFile`, `strykerArgs`, `showEffectiveCommand`, and `writeStepSummary` are supported as action inputs. Everything else Stryker supports — reporters, thresholds, `since`, baseline, output directory, verbosity, and so on — is expressed through `strykerArgs` (or your config file):
 
 ```yml
-# before
-with:
-  reporters: "markdown,json"
-  thresholdHigh: "85"
-  breakAt: "65"
-# after
 with:
   strykerArgs: "--reporter markdown --reporter json --threshold-high 85 --break-at 65"
 ```
-
-`dashboardApiKey` has also been removed from the action interface.
 
 To authenticate with the Stryker dashboard, pass the native Stryker environment variable in your workflow:
 
@@ -196,4 +186,26 @@ jobs:
 - If both the config file and `strykerArgs` specify the same setting, `strykerArgs` wins since it's appended last.
 - Generated outputs depend on the reports Stryker actually writes during the run.
 - For the best step-summary experience, include the `markdown` reporter.
+
+## Breaking change
+
+`dashboardApiKey` and the curated per-flag inputs (`reporters`, `output`, `thresholdHigh`, `thresholdLow`, `breakAt`, `since`, `withBaseline`, `verbosity`) have been removed from the action interface. Only `configFile`, `strykerArgs`, `showEffectiveCommand`, and `writeStepSummary` remain — everything else is now expressed through `strykerArgs` or the config file:
+
+```yml
+# before
+with:
+  reporters: "markdown,json"
+  thresholdHigh: "85"
+  breakAt: "65"
+# after
+with:
+  strykerArgs: "--reporter markdown --reporter json --threshold-high 85 --break-at 65"
+```
+
+To authenticate with the Stryker dashboard, pass the native Stryker environment variable in your workflow instead:
+
+```yml
+env:
+  STRYKER_DASHBOARD_API_KEY: ${{ secrets.STRYKER_DASHBOARD_API_KEY }}
+```
 ```
