@@ -2,9 +2,6 @@
 
 GitHub Action for mutation testing with [Stryker.NET](https://stryker-mutator.io/docs/stryker-net/introduction/) via Docker.
 
-> [!NOTE]
-> Runs on the .NET 10 SDK.
-
 ## Inputs
 
 | Input | Description | Default |
@@ -31,6 +28,9 @@ Everything Stryker supports beyond a config file should go through `strykerArgs`
 Pass `STRYKER_DASHBOARD_API_KEY` via workflow environment and let Stryker.NET consume it natively.
 
 ## Example
+
+> [!NOTE]
+> Runs on the .NET 10 SDK.
 
 ```yml
 name: Run Stryker.NET
