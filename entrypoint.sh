@@ -14,10 +14,6 @@ is_true() {
   esac
 }
 
-quote_arg() {
-  printf "'%s'" "$(printf '%s' "$1" | sed "s/'/'\\\\''/g")"
-}
-
 write_output() {
   if [ -n "${GITHUB_OUTPUT:-}" ]; then
     printf '%s=%s\n' "$1" "$2" >> "${GITHUB_OUTPUT}"
@@ -71,34 +67,6 @@ detect_threshold_status() {
   fi
 }
 
-print_effective_command() {
-  printf 'effective-command: dotnet-stryker'
-  redact_next=0
-
-  for arg in "$@"; do
-    if [ "${redact_next}" -eq 1 ]; then
-      printf " '[REDACTED]'"
-      redact_next=0
-      continue
-    fi
-
-    case "${arg}" in
-      --dashboard-api-key)
-        printf " '--dashboard-api-key'"
-        redact_next=1
-        ;;
-      --dashboard-api-key=*)
-        printf " '--dashboard-api-key=[REDACTED]'"
-        ;;
-      *)
-        printf ' %s' "$(quote_arg "${arg}")"
-        ;;
-    esac
-  done
-
-  printf '\n'
-}
-
 configuration_file="${INPUT_CONFIGFILE:-}"
 
 if [ -n "${configuration_file}" ]; then
@@ -128,10 +96,6 @@ if [ -n "${stryker_args}" ]; then
   # Intentionally allow shell-style splitting and quoting for advanced caller-controlled overrides.
   # shellcheck disable=SC2086
   eval "set -- \"\$@\" ${stryker_args}"
-fi
-
-if is_true "${INPUT_SHOWEFFECTIVECOMMAND:-false}"; then
-  print_effective_command "$@"
 fi
 
 set +e

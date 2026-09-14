@@ -12,7 +12,6 @@ The action's Docker image runs on the .NET 10 SDK.
 | :--- | :--- | :--- |
 | `configFile` | Path to the Stryker.NET config file (`--config-file`). Leave empty to use Stryker's default config discovery. | `""` |
 | `strykerArgs` | Additional raw Stryker CLI arguments appended last to `dotnet-stryker`, e.g. `--reporter markdown --reporter json --threshold-high 85 --break-at 65`. | `""` |
-| `showEffectiveCommand` | When `true`, print the assembled `dotnet-stryker` command with secret values redacted. | `"false"` |
 | `writeStepSummary` | When `true`, publish a GitHub step summary from generated report artifacts when available. | `"true"` |
 
 Everything Stryker supports beyond a config file — reporters, thresholds, `since`, baseline, output directory, verbosity — goes through `strykerArgs`. If both specify the same setting, `strykerArgs` wins since it's appended last.
@@ -30,7 +29,7 @@ Everything Stryker supports beyond a config file — reporters, thresholds, `sin
 
 ## Credential handling
 
-Pass `STRYKER_DASHBOARD_API_KEY` via workflow environment and let Stryker.NET consume it natively — the action never puts the key on the command line, in outputs, or in the step summary, and redacts it from `showEffectiveCommand`.
+Pass `STRYKER_DASHBOARD_API_KEY` via workflow environment and let Stryker.NET consume it natively — the action never puts the key on the command line, in outputs, or in the step summary.
 
 ## Example
 

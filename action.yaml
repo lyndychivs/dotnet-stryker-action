@@ -17,11 +17,6 @@ inputs:
     required: false
     default: ""
 
-  showEffectiveCommand:
-    description: "When true, print the assembled dotnet-stryker command with secret values redacted."
-    required: false
-    default: "false"
-
   writeStepSummary:
     description: "When true, write a GitHub step summary from generated report artifacts when available."
     required: false
