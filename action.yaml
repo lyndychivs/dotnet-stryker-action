@@ -17,46 +17,6 @@ inputs:
     required: false
     default: ""
 
-  reporters:
-    description: "Reporters inform about various stages in the mutation test run. Provide a comma-separated list that becomes repeated --reporter flags."
-    required: false
-    default: ""
-
-  output:
-    description: "Changes the output path for Stryker logs and reports. This can be an absolute or relative path."
-    required: false
-    default: ""
-
-  thresholdHigh:
-    description: "Minimum good mutation score. Must be higher than or equal to threshold low. Allowed values: 0 - 100."
-    required: false
-    default: ""
-
-  thresholdLow:
-    description: "Minimum acceptable mutation score. Must be less than or equal to threshold high and more than or equal to threshold break. Allowed values: 0 - 100."
-    required: false
-    default: ""
-
-  breakAt:
-    description: "Anything below this mutation score will return a non-zero exit code. Must be less than or equal to threshold low. Allowed values: 0 - 100."
-    required: false
-    default: ""
-
-  since:
-    description: "Enables diff compare. Only test changed files. Use true for the default behavior or provide a committish target as --since:<committish>."
-    required: false
-    default: ""
-
-  withBaseline:
-    description: "EXPERIMENTAL: Use results stored in the Stryker dashboard to only test new mutants. Use true for the default behavior or provide a committish target as --with-baseline:<committish>."
-    required: false
-    default: ""
-
-  verbosity:
-    description: "The verbosity for output to the console. Allowed values: error, warning, info, debug, trace."
-    required: false
-    default: ""
-
   showEffectiveCommand:
     description: "When true, print the assembled dotnet-stryker command with secret values redacted."
     required: false
@@ -71,7 +31,7 @@ outputs:
   mutationScore:
     description: "The final mutation score percentage derived from the generated Stryker report when it is available."
   thresholdStatus:
-    description: "Threshold evaluation result: passed, failed, or empty when Stryker did not produce a comparable break-threshold result."
+    description: "passed when the dotnet-stryker command exits 0, failed otherwise (a broken threshold, a build failure, or a test failure all count)."
   reportDirectory:
     description: "Path to the latest Stryker reports directory generated under the configured output location."
   htmlReportPath:

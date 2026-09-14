@@ -39,9 +39,7 @@ jobs:
         uses: ./
         with:
           configFile: tests/stryker-config.json
-          reporters: markdown,json
-          verbosity: info
-          cliArgs: --break-on-initial-test-failure
+          strykerArgs: "--reporter markdown --reporter json --verbosity info --break-on-initial-test-failure"
 
       - name: Verify outputs
         shell: bash

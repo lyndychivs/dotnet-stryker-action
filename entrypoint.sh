@@ -3,10 +3,6 @@ set -eu
 
 export PATH="$PATH:/root/.dotnet/tools"
 
-trim() {
-  printf '%s' "$1" | sed 's/^[[:space:]]*//;s/[[:space:]]*$//'
-}
-
 is_true() {
   case "${1:-}" in
     true|TRUE|True|1|yes|YES|on|ON)
@@ -70,37 +66,10 @@ detect_mutation_score() {
   printf '\n'
 }
 
-detect_break_threshold() {
-  markdown_report="$1"
-
-  if [ -n "${INPUT_BREAKAT:-}" ]; then
-    printf '%s\n' "${INPUT_BREAKAT}"
-    return 0
-  fi
-
-  if [ -n "${markdown_report}" ] && [ -f "${markdown_report}" ]; then
-    threshold_value=$(sed -n 's/.*Coverage Thresholds:.*break: \([0-9.][0-9.]*\).*/\1/p' "${markdown_report}" | tail -n 1)
-    if [ -n "${threshold_value}" ]; then
-      printf '%s\n' "${threshold_value}"
-      return 0
-    fi
-  fi
-
-  printf '\n'
-}
-
 detect_threshold_status() {
-  mutation_score="$1"
-  break_threshold="$2"
+  exit_code="$1"
 
-  if [ -z "${mutation_score}" ] || [ -z "${break_threshold}" ]; then
-    printf '\n'
-    return 0
-  fi
-
-  mutation_score_value=${mutation_score%\%}
-
-  if awk "BEGIN { exit !(${mutation_score_value} >= ${break_threshold}) }"; then
+  if [ "${exit_code}" -eq 0 ]; then
     printf 'passed\n'
   else
     printf 'failed\n'
@@ -158,54 +127,6 @@ if [ -n "${configuration_file}" ]; then
   set -- --config-file "${configuration_file}"
 fi
 
-if [ -n "${INPUT_REPORTERS:-}" ]; then
-  old_ifs=$IFS
-  IFS=','
-  for reporter in ${INPUT_REPORTERS}; do
-    reporter=$(trim "${reporter}")
-    if [ -n "${reporter}" ]; then
-      set -- "$@" --reporter "${reporter}"
-    fi
-  done
-  IFS=$old_ifs
-fi
-
-if [ -n "${INPUT_OUTPUT:-}" ]; then
-  set -- "$@" --output "${INPUT_OUTPUT}"
-fi
-
-if [ -n "${INPUT_THRESHOLDHIGH:-}" ]; then
-  set -- "$@" --threshold-high "${INPUT_THRESHOLDHIGH}"
-fi
-
-if [ -n "${INPUT_THRESHOLDLOW:-}" ]; then
-  set -- "$@" --threshold-low "${INPUT_THRESHOLDLOW}"
-fi
-
-if [ -n "${INPUT_BREAKAT:-}" ]; then
-  set -- "$@" --break-at "${INPUT_BREAKAT}"
-fi
-
-if [ -n "${INPUT_SINCE:-}" ]; then
-  if is_true "${INPUT_SINCE}"; then
-    set -- "$@" --since
-  else
-    set -- "$@" "--since:${INPUT_SINCE}"
-  fi
-fi
-
-if [ -n "${INPUT_WITHBASELINE:-}" ]; then
-  if is_true "${INPUT_WITHBASELINE}"; then
-    set -- "$@" --with-baseline
-  else
-    set -- "$@" "--with-baseline:${INPUT_WITHBASELINE}"
-  fi
-fi
-
-if [ -n "${INPUT_VERBOSITY:-}" ]; then
-  set -- "$@" --verbosity "${INPUT_VERBOSITY}"
-fi
-
 stryker_args="${INPUT_STRYKERARGS:-}"
 
 if [ -n "${stryker_args}" ]; then
@@ -235,8 +156,7 @@ if [ -n "${report_dir}" ]; then
 fi
 
 mutation_score=$(detect_mutation_score "${markdown_report}" "${json_report}")
-break_threshold=$(detect_break_threshold "${markdown_report}")
-threshold_status=$(detect_threshold_status "${mutation_score}" "${break_threshold}")
+threshold_status=$(detect_threshold_status "${exit_code}")
 
 write_output "mutationScore" "${mutation_score}"
 write_output "thresholdStatus" "${threshold_status}"

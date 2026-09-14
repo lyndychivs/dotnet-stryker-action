@@ -4,11 +4,24 @@ GitHub Action for mutation testing with [Stryker.NET](https://stryker-mutator.io
 ## GitHub Action
 This action is a thin Stryker.NET wrapper with a small convenience layer for common CI scenarios.
 
-Consumers should treat the [Stryker.NET configuration](https://stryker-mutator.io/docs/stryker-net/configuration) file as the primary source of truth, then use action inputs for common workflow overrides.
+Consumers should treat the [Stryker.NET configuration](https://stryker-mutator.io/docs/stryker-net/configuration) file as the primary source of truth, then use `strykerArgs` for workflow-specific overrides.
 
 ### Breaking change
 
-`dashboardApiKey` has been removed from the action interface.
+Only `configFile`, `strykerArgs`, `showEffectiveCommand`, and `writeStepSummary` remain as action inputs. The curated per-flag inputs (`reporters`, `output`, `thresholdHigh`, `thresholdLow`, `breakAt`, `since`, `withBaseline`, `verbosity`) have been removed — they only translated to `dotnet-stryker` flags without adding any validation of their own, since Stryker validates its own arguments when it runs. Express them through `strykerArgs` (or your config file) instead:
+
+```yml
+# before
+with:
+  reporters: "markdown,json"
+  thresholdHigh: "85"
+  breakAt: "65"
+# after
+with:
+  strykerArgs: "--reporter markdown --reporter json --threshold-high 85 --break-at 65"
+```
+
+`dashboardApiKey` has also been removed from the action interface.
 
 To authenticate with the Stryker dashboard, pass the native Stryker environment variable in your workflow:
 
@@ -31,14 +44,6 @@ The action's Docker image runs on the .NET 10 SDK.
 | :--- | :--- | :--- |
 | `configFile` | Path to the Stryker.NET config file. This matches the CLI flag `--config-file`. Leave empty to let Stryker use its default config discovery. | `""` |
 | `strykerArgs` | Additional raw Stryker CLI arguments appended last to `dotnet-stryker`. | `""` |
-| `reporters` | Comma-separated reporters translated to repeated `--reporter` flags. | `""` |
-| `output` | Output directory passed to `--output`. | `""` |
-| `thresholdHigh` | Passed to `--threshold-high`. | `""` |
-| `thresholdLow` | Passed to `--threshold-low`. | `""` |
-| `breakAt` | Passed to `--break-at`. | `""` |
-| `since` | Use `true` for `--since`, or provide a committish for `--since:<target>`. | `""` |
-| `withBaseline` | Use `true` for `--with-baseline`, or provide a committish for `--with-baseline:<target>`. | `""` |
-| `verbosity` | Passed to `--verbosity`. Supported values follow the Stryker CLI: `error`, `warning`, `info`, `debug`, `trace`. | `""` |
 | `showEffectiveCommand` | When `true`, print the assembled `dotnet-stryker` command with secret values redacted. | `"false"` |
 | `writeStepSummary` | When `true`, publish a GitHub step summary from generated report artifacts when available. | `"true"` |
 
@@ -46,7 +51,7 @@ The action's Docker image runs on the .NET 10 SDK.
 | Output | Description |
 | :--- | :--- |
 | `mutationScore` | Final mutation score percentage derived from the generated Stryker report when it is available. |
-| `thresholdStatus` | `passed`, `failed`, or empty when Stryker did not produce a comparable break-threshold result. |
+| `thresholdStatus` | `passed` when the `dotnet-stryker` command exits `0`, `failed` otherwise (a broken threshold, a build failure, or a test failure all count). |
 | `reportDirectory` | Path to the latest Stryker reports directory generated under the configured output location. |
 | `htmlReportPath` | Path to the generated HTML report when Stryker writes one. |
 | `jsonReportPath` | Path to the generated JSON report when Stryker writes one. |
@@ -57,27 +62,14 @@ The action's Docker image runs on the .NET 10 SDK.
 The action builds the Stryker command in this order:
 
 1. `--config-file <configFile>` when a file path is provided
-2. Curated action inputs such as thresholds, reporters, output, and verbosity
-3. `strykerArgs` appended last
+2. `strykerArgs` appended last
 
 This means:
 
 - the config file defines the baseline behavior when present
-- convenience inputs provide common workflow overrides
-- `strykerArgs` is the advanced escape hatch and final override mechanism
+- `strykerArgs` is the escape hatch and final override mechanism for everything else — reporters, thresholds, `since`, baseline, output directory, verbosity, and any other Stryker CLI option
 - when `configFile` is omitted, the action intentionally skips `--config-file` and lets Stryker use its default config discovery
-
-## Capability matrix
-| Capability | Action input | Config file | `strykerArgs` |
-| :--- | :---: | :---: | :---: |
-| Choose config file | Yes | No | Yes |
-| Dashboard API key | No - use environment | Yes | Yes |
-| Reporters | Yes | Yes | Yes |
-| Thresholds | Yes | Yes | Yes |
-| `since` | Yes | Yes | Yes |
-| Baseline | Yes | Yes | Yes |
-| Output directory | Yes | Yes | Yes |
-| Advanced / newly added Stryker options | No | Sometimes | Yes |
+- `dotnet-stryker` itself validates all arguments and reports errors directly to the job log; the action performs no validation of its own beyond checking that a provided `configFile` path exists
 
 ## Credential handling
 
@@ -148,11 +140,10 @@ jobs:
         uses: lyndychivs/dotnet-stryker-action@v1.8
         with:
           configFile: "stryker-config.json"
-          reporters: "markdown,json"
-          thresholdHigh: "85"
-          thresholdLow: "70"
-          breakAt: "65"
-          verbosity: "info"
+          strykerArgs: >-
+            --reporter markdown --reporter json
+            --threshold-high 85 --threshold-low 70 --break-at 65
+            --verbosity info
 ```
 
 ### Example 4 - use `since` with a Git target
@@ -174,7 +165,7 @@ jobs:
         uses: lyndychivs/dotnet-stryker-action@v1.8
         with:
           configFile: "stryker-config.json"
-          since: "origin/main"
+          strykerArgs: "--since:origin/main"
 ```
 
 ### Example 5 - use `strykerArgs` as the escape hatch
@@ -202,8 +193,7 @@ jobs:
 
 ## Notes
 
-- If both the config file and action inputs specify the same setting, the generated CLI arguments win.
-- `strykerArgs` is appended last and therefore has the highest precedence.
+- If both the config file and `strykerArgs` specify the same setting, `strykerArgs` wins since it's appended last.
 - Generated outputs depend on the reports Stryker actually writes during the run.
 - For the best step-summary experience, include the `markdown` reporter.
 ```
