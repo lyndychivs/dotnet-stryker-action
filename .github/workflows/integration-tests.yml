@@ -28,11 +28,6 @@ jobs:
 
       # Scenario: an invalid Stryker CLI flag makes dotnet-stryker fail before
       # producing any report — every report-path output should stay empty.
-      # This must run before any other scenario produces a report, since
-      # find_latest_report_dir in entrypoint.sh scans the whole workspace for
-      # the newest StrykerOutput reports directory rather than scoping to the
-      # current run — an earlier scenario's leftover report would otherwise
-      # be picked up here.
       - name: Run Local Action (invalid strykerArgs)
         id: stryker-invalid-args
         continue-on-error: true

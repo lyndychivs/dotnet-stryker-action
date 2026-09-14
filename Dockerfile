@@ -6,6 +6,10 @@ LABEL org.opencontainers.image.licenses="MIT"
 
 COPY --chmod=755 entrypoint.sh /entrypoint.sh
 
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends jq \
+    && rm -rf /var/lib/apt/lists/*
+
 RUN dotnet tool install -g dotnet-stryker --version 5.0.0
 
 ENTRYPOINT ["/entrypoint.sh"]

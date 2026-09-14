@@ -13,7 +13,7 @@ inputs:
     default: ""
 
   strykerArgs:
-    description: "Additional Stryker CLI arguments appended last to the dotnet-stryker command."
+    description: "Additional Stryker CLI arguments appended last to the dotnet-stryker command. Split on whitespace only; arguments can't contain spaces or shell quoting."
     required: false
     default: ""
 

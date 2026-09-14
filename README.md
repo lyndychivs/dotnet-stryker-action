@@ -7,7 +7,7 @@ GitHub Action for mutation testing with [Stryker.NET](https://stryker-mutator.io
 | Input | Description | Default |
 | :--- | :--- | :--- |
 | `configFile` | Path to the Stryker.NET config file (`--config-file`). Leave empty to use Stryker's default config discovery. | `""` |
-| `strykerArgs` | Additional raw Stryker CLI arguments appended last to `dotnet-stryker`, e.g. `--reporter markdown --reporter json --threshold-high 85 --break-at 65`. | `""` |
+| `strykerArgs` | Additional raw Stryker CLI arguments appended last to `dotnet-stryker`, e.g. `--reporter markdown --reporter json --threshold-high 85 --break-at 65`. Split on whitespace only; individual arguments can't contain spaces or shell quoting. | `""` |
 | `writeStepSummary` | When `true`, publish a GitHub step summary from generated report artifacts when available. | `"true"` |
 
 Everything Stryker supports beyond a config file should go through `strykerArgs`.
@@ -25,7 +25,7 @@ Everything Stryker supports beyond a config file should go through `strykerArgs`
 
 ## Stryker Dashboard
 
-Pass `STRYKER_DASHBOARD_API_KEY` via workflow environment and let Stryker.NET consume it natively.
+Pass `STRYKER_DASHBOARD_API_KEY` via workflow environment to supply the API key, and add `--reporter dashboard` to `strykerArgs` to enable dashboard reporting — the environment variable alone does not turn the reporter on.
 
 ## Example
 
@@ -51,6 +51,6 @@ jobs:
         with:
           configFile: "stryker-config.json"
           strykerArgs: >-
-            --reporter markdown --reporter json
+            --reporter markdown --reporter json --reporter dashboard
             --threshold-high 85 --threshold-low 70 --break-at 65
 ```

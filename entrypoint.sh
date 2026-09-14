@@ -42,7 +42,12 @@ detect_mutation_score() {
   json_report="$2"
 
   if [ -n "${json_report}" ] && [ -f "${json_report}" ]; then
-    score_value=$(sed -n 's/.*"mutationScore"[[:space:]]*:[[:space:]]*\([0-9.][0-9.]*\).*/\1/p' "${json_report}" | head -n 1)
+    score_value=$(jq -r '
+      [.files[].mutants[].status] as $s
+      | ($s | map(select(. == "Killed" or . == "Timeout")) | length) as $detected
+      | ($s | map(select(. == "Killed" or . == "Timeout" or . == "Survived" or . == "NoCoverage")) | length) as $total
+      | if $total == 0 then "" else (($detected / $total * 100) * 100 | round / 100 | tostring) end
+    ' "${json_report}" 2>/dev/null)
     if [ -n "${score_value}" ]; then
       printf '%s%%\n' "${score_value}"
       return 0
@@ -93,10 +98,16 @@ fi
 stryker_args="${INPUT_STRYKERARGS:-}"
 
 if [ -n "${stryker_args}" ]; then
-  # Intentionally allow shell-style splitting and quoting for advanced caller-controlled overrides.
+  # Whitespace-split only (no shell quoting/expansion) so args can't inject commands.
+  set -f
   # shellcheck disable=SC2086
-  eval "set -- \"\$@\" ${stryker_args}"
+  set -- "$@" ${stryker_args}
+  set +f
 fi
+
+# Clear leftover report output so find_latest_report_dir can't pick up a stale
+# report from an earlier run sharing this workspace.
+find . -type d -name StrykerOutput -exec rm -rf {} +
 
 set +e
 dotnet-stryker "$@"
