@@ -45,7 +45,7 @@ jobs:
         uses: actions/checkout@v6
 
       - name: Run Stryker.NET
-        uses: lyndychivs/dotnet-stryker-action@v1.8
+        uses: lyndychivs/dotnet-stryker-action@v2
         env:
           STRYKER_DASHBOARD_API_KEY: ${{ secrets.STRYKER_DASHBOARD_API_KEY }}
         with:
@@ -54,3 +54,25 @@ jobs:
             --reporter markdown --reporter json
             --threshold-high 85 --threshold-low 70 --break-at 65
 ```
+
+## Upgrading from v1
+
+`dashboardApiKey`, `showEffectiveCommand`, and the curated per-flag inputs
+(`reporters`, `output`, `thresholdHigh`, `thresholdLow`, `breakAt`, `since`,
+`withBaseline`, `verbosity`) have been removed. Only `configFile`,
+`strykerArgs`, and `writeStepSummary` remain — express everything else
+through `strykerArgs` or your config file:
+
+```yml
+# before
+with:
+  reporters: "markdown,json"
+  thresholdHigh: "85"
+  breakAt: "65"
+# after
+with:
+  strykerArgs: "--reporter markdown --reporter json --threshold-high 85 --break-at 65"
+```
+
+`configFile` was also renamed from `configurationFile` and is no longer
+required — omit it to use Stryker's own config discovery.
