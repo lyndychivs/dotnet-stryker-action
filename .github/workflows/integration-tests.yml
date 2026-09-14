@@ -83,8 +83,11 @@ jobs:
           test -f "${{ steps.stryker.outputs.markdownSummaryPath }}"
           test -f "${{ steps.stryker.outputs.jsonReportPath }}"
 
-      # Scenario: an unreachable --break-at threshold makes dotnet-stryker exit
-      # non-zero on threshold grounds alone — reports still get produced.
+      # Scenario: a --break-at threshold above the config's threshold-low (101
+      # vs. tests/stryker-config.json's 60) makes dotnet-stryker reject the
+      # run during threshold validation, before any mutants are tested — no
+      # report is produced, same failure shape as the invalid strykerArgs
+      # scenario above.
       - name: Run Local Action (threshold break)
         id: stryker-threshold-break
         continue-on-error: true
@@ -99,9 +102,9 @@ jobs:
 
           test "${{ steps.stryker-threshold-break.outcome }}" = "failure"
           test "${{ steps.stryker-threshold-break.outputs.thresholdStatus }}" = "failed"
-          test -n "${{ steps.stryker-threshold-break.outputs.mutationScore }}"
-          test -n "${{ steps.stryker-threshold-break.outputs.jsonReportPath }}"
-          test -n "${{ steps.stryker-threshold-break.outputs.markdownSummaryPath }}"
+          test -z "${{ steps.stryker-threshold-break.outputs.mutationScore }}"
+          test -z "${{ steps.stryker-threshold-break.outputs.jsonReportPath }}"
+          test -z "${{ steps.stryker-threshold-break.outputs.markdownSummaryPath }}"
 
       # Scenario: no configFile input at all — Stryker falls back to its own
       # config discovery, which looks for stryker-config.json in the working
