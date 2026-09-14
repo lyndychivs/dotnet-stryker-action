@@ -13,36 +13,27 @@ jobs:
     permissions:
       contents: read
 
+    defaults:
+      run:
+        shell: bash
+
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v7
 
-      - name: Verify checked-in sample solution
-        shell: bash
-        run: |
-          set -euo pipefail
-          test -f tests/Sample.slnx
-          test -f tests/Sample/Sample.csproj
-          test -f tests/Sample/Calculator.cs
-          test -f tests/Sample.Unit.Tests/Sample.Unit.Tests.csproj
-          test -f tests/Sample.Unit.Tests/CalculatorTests.cs
-          test -f tests/stryker-config.json
-
-      - name: Run sample tests
-        shell: bash
+      - name: Run Sample Tests
         run: |
           set -euo pipefail
           dotnet test tests/Sample.slnx --configuration Release
 
-      - name: Run local action
+      - name: Run Local Action
         id: stryker
         uses: ./
         with:
           configFile: tests/stryker-config.json
           strykerArgs: "--reporter markdown --reporter json --verbosity info --break-on-initial-test-failure"
 
-      - name: Verify outputs
-        shell: bash
+      - name: Verify Outputs
         run: |
           set -euo pipefail
 
@@ -50,6 +41,7 @@ jobs:
           test -n "${{ steps.stryker.outputs.markdownSummaryPath }}"
           test -n "${{ steps.stryker.outputs.jsonReportPath }}"
           test -n "${{ steps.stryker.outputs.mutationScore }}"
+          test "${{ steps.stryker.outputs.thresholdStatus }}" = "passed"
 
           test -f "${{ steps.stryker.outputs.markdownSummaryPath }}"
           test -f "${{ steps.stryker.outputs.jsonReportPath }}"
