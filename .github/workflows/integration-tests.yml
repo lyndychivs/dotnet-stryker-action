@@ -60,7 +60,14 @@ jobs:
       - name: Verify Outputs (invalid configFile)
         run: |
           set -euo pipefail
+
           test "${{ steps.stryker-invalid-config.outcome }}" = "failure"
+          test "${{ steps.stryker-invalid-config.outputs.thresholdStatus }}" = "failed"
+          test -z "${{ steps.stryker-invalid-config.outputs.reportDirectory }}"
+          test -z "${{ steps.stryker-invalid-config.outputs.mutationScore }}"
+          test -z "${{ steps.stryker-invalid-config.outputs.jsonReportPath }}"
+          test -z "${{ steps.stryker-invalid-config.outputs.markdownSummaryPath }}"
+          test -z "${{ steps.stryker-invalid-config.outputs.htmlReportPath }}"
 
       # Scenario: happy path — valid config file, markdown + json reporters.
       - name: Run Local Action (happy path)

@@ -73,46 +73,52 @@ detect_threshold_status() {
 }
 
 configuration_file="${INPUT_CONFIGFILE:-}"
+config_missing=false
 
 if [ -n "${configuration_file}" ]; then
   if [ ! -f "${configuration_file}" ]; then
     echo "Configuration file not found: ${configuration_file}" >&2
-    exit 1
+    config_missing=true
+  else
+    echo "config-file: ${configuration_file}"
   fi
-
-  echo "config-file: ${configuration_file}"
 else
   echo "config-file: not provided; using Stryker default configuration discovery"
 fi
 
-if [ -n "${STRYKER_DASHBOARD_API_KEY:-}" ]; then
-  echo "dashboard-api-key: provided via environment"
+if [ "${config_missing}" = true ]; then
+  exit_code=1
 else
-  echo "dashboard-api-key: not provided"
+  if [ -n "${STRYKER_DASHBOARD_API_KEY:-}" ]; then
+    echo "dashboard-api-key: provided via environment"
+  else
+    echo "dashboard-api-key: not provided"
+  fi
+
+  if [ -n "${configuration_file}" ]; then
+    set -- --config-file "${configuration_file}"
+  fi
+
+  stryker_args="${INPUT_STRYKERARGS:-}"
+
+  if [ -n "${stryker_args}" ]; then
+    # Whitespace-split only (no shell quoting/expansion) so args can't inject commands.
+    set -f
+    # shellcheck disable=SC2086
+    set -- "$@" ${stryker_args}
+    set +f
+  fi
+
+  # Clear leftover report output so find_latest_report_dir can't pick up a stale
+  # report from an earlier run sharing this workspace. Best-effort: a leftover
+  # directory that can't be removed shouldn't abort the whole action.
+  find . -type d -name StrykerOutput -exec rm -rf {} + || true
+
+  set +e
+  dotnet-stryker "$@"
+  exit_code=$?
+  set -e
 fi
-
-if [ -n "${configuration_file}" ]; then
-  set -- --config-file "${configuration_file}"
-fi
-
-stryker_args="${INPUT_STRYKERARGS:-}"
-
-if [ -n "${stryker_args}" ]; then
-  # Whitespace-split only (no shell quoting/expansion) so args can't inject commands.
-  set -f
-  # shellcheck disable=SC2086
-  set -- "$@" ${stryker_args}
-  set +f
-fi
-
-# Clear leftover report output so find_latest_report_dir can't pick up a stale
-# report from an earlier run sharing this workspace.
-find . -type d -name StrykerOutput -exec rm -rf {} +
-
-set +e
-dotnet-stryker "$@"
-exit_code=$?
-set -e
 
 report_dir=$(find_latest_report_dir)
 html_report=""
