@@ -7,14 +7,34 @@ branding:
   color: "red"
 
 inputs:
-  configurationFile:
-    description: "The path of the Stryker.NET configuration file."
-    required: true
-
-  dashboardApiKey:
-    description: "The API key for authentication with the Stryker dashboard."
+  configFile:
+    description: "Choose the file containing your Stryker configuration. Supports json and yaml formats. Optional; Stryker falls back to stryker-config.json when omitted."
     required: false
     default: ""
+
+  strykerArgs:
+    description: "Additional Stryker CLI arguments appended last to the dotnet-stryker command. Split on whitespace only; arguments can't contain spaces or shell quoting."
+    required: false
+    default: ""
+
+  writeStepSummary:
+    description: "When true, write a GitHub step summary from generated report artifacts when available."
+    required: false
+    default: "true"
+
+outputs:
+  mutationScore:
+    description: "The final mutation score percentage derived from the generated Stryker report when it is available."
+  thresholdStatus:
+    description: "passed when the dotnet-stryker command exits 0, failed otherwise (a broken threshold, a build failure, or a test failure all count)."
+  reportDirectory:
+    description: "Path to the latest Stryker reports directory generated under the configured output location."
+  htmlReportPath:
+    description: "Path to the generated HTML report when Stryker writes one."
+  jsonReportPath:
+    description: "Path to the generated JSON report when Stryker writes one."
+  markdownSummaryPath:
+    description: "Path to the generated Markdown summary report when Stryker writes one."
 
 runs:
   using: "docker"

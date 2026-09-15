@@ -1,0 +1,198 @@
+name: integration-tests
+run-name: Integration Tests
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  integration-tests:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v7
+
+      - name: Run Sample Tests
+        run: |
+          set -euo pipefail
+          dotnet test tests/Sample.slnx --configuration Release
+
+      - name: Run entrypoint.sh Unit Tests
+        run: sh tests/entrypoint_unit.sh
+
+      # Scenario: an invalid Stryker CLI flag makes dotnet-stryker fail before
+      # producing any report — every report-path output should stay empty.
+      - name: Run Local Action (invalid strykerArgs)
+        id: stryker-invalid-args
+        continue-on-error: true
+        uses: ./
+        with:
+          configFile: tests/stryker-config.json
+          strykerArgs: "--not-a-real-flag"
+
+      - name: Verify Outputs (invalid strykerArgs)
+        run: |
+          set -euo pipefail
+
+          test "${{ steps.stryker-invalid-args.outcome }}" = "failure"
+          test "${{ steps.stryker-invalid-args.outputs.thresholdStatus }}" = "failed"
+          test -z "${{ steps.stryker-invalid-args.outputs.reportDirectory }}"
+          test -z "${{ steps.stryker-invalid-args.outputs.mutationScore }}"
+          test -z "${{ steps.stryker-invalid-args.outputs.jsonReportPath }}"
+          test -z "${{ steps.stryker-invalid-args.outputs.markdownSummaryPath }}"
+          test -z "${{ steps.stryker-invalid-args.outputs.htmlReportPath }}"
+
+      # Scenario: configFile points to a file that doesn't exist — entrypoint.sh
+      # should exit 1 before dotnet-stryker ever runs.
+      - name: Run Local Action (invalid configFile)
+        id: stryker-invalid-config
+        continue-on-error: true
+        uses: ./
+        with:
+          configFile: tests/does-not-exist.json
+
+      - name: Verify Outputs (invalid configFile)
+        run: |
+          set -euo pipefail
+
+          test "${{ steps.stryker-invalid-config.outcome }}" = "failure"
+          test "${{ steps.stryker-invalid-config.outputs.thresholdStatus }}" = "failed"
+          test -z "${{ steps.stryker-invalid-config.outputs.reportDirectory }}"
+          test -z "${{ steps.stryker-invalid-config.outputs.mutationScore }}"
+          test -z "${{ steps.stryker-invalid-config.outputs.jsonReportPath }}"
+          test -z "${{ steps.stryker-invalid-config.outputs.markdownSummaryPath }}"
+          test -z "${{ steps.stryker-invalid-config.outputs.htmlReportPath }}"
+
+      # Scenario: happy path — valid config file, markdown + json reporters.
+      - name: Run Local Action (happy path)
+        id: stryker
+        uses: ./
+        with:
+          configFile: tests/stryker-config.json
+          strykerArgs: "--reporter markdown --reporter json --verbosity info --break-on-initial-test-failure"
+
+      - name: Verify Outputs (happy path)
+        run: |
+          set -euo pipefail
+
+          test -n "${{ steps.stryker.outputs.reportDirectory }}"
+          test -n "${{ steps.stryker.outputs.markdownSummaryPath }}"
+          test -n "${{ steps.stryker.outputs.jsonReportPath }}"
+          test -n "${{ steps.stryker.outputs.mutationScore }}"
+          test "${{ steps.stryker.outputs.thresholdStatus }}" = "passed"
+
+          test -f "${{ steps.stryker.outputs.markdownSummaryPath }}"
+          test -f "${{ steps.stryker.outputs.jsonReportPath }}"
+
+      # Scenario: configFile missing, but the happy-path run above already
+      # left a StrykerOutput report directory in this workspace. The action
+      # must not report that stale run's paths as its own.
+      - name: Run Local Action (invalid configFile after prior report)
+        id: stryker-invalid-config-stale
+        continue-on-error: true
+        uses: ./
+        with:
+          configFile: tests/does-not-exist.json
+
+      - name: Verify Outputs (invalid configFile after prior report)
+        run: |
+          set -euo pipefail
+
+          test "${{ steps.stryker-invalid-config-stale.outcome }}" = "failure"
+          test "${{ steps.stryker-invalid-config-stale.outputs.thresholdStatus }}" = "failed"
+          test -z "${{ steps.stryker-invalid-config-stale.outputs.reportDirectory }}"
+          test -z "${{ steps.stryker-invalid-config-stale.outputs.mutationScore }}"
+          test -z "${{ steps.stryker-invalid-config-stale.outputs.jsonReportPath }}"
+          test -z "${{ steps.stryker-invalid-config-stale.outputs.markdownSummaryPath }}"
+          test -z "${{ steps.stryker-invalid-config-stale.outputs.htmlReportPath }}"
+
+      # Scenario: a --break-at threshold above the config's threshold-low (101
+      # vs. tests/stryker-config.json's 60) makes dotnet-stryker reject the
+      # run during threshold validation, before any mutants are tested — no
+      # report is produced, same failure shape as the invalid strykerArgs
+      # scenario above.
+      - name: Run Local Action (threshold break)
+        id: stryker-threshold-break
+        continue-on-error: true
+        uses: ./
+        with:
+          configFile: tests/stryker-config.json
+          strykerArgs: "--reporter markdown --reporter json --break-at 101"
+
+      - name: Verify Outputs (threshold break)
+        run: |
+          set -euo pipefail
+
+          test "${{ steps.stryker-threshold-break.outcome }}" = "failure"
+          test "${{ steps.stryker-threshold-break.outputs.thresholdStatus }}" = "failed"
+          test -z "${{ steps.stryker-threshold-break.outputs.mutationScore }}"
+          test -z "${{ steps.stryker-threshold-break.outputs.jsonReportPath }}"
+          test -z "${{ steps.stryker-threshold-break.outputs.markdownSummaryPath }}"
+
+      # Scenario: no configFile input at all — Stryker falls back to its own
+      # config discovery, which looks for stryker-config.json in the working
+      # directory (the repo root here), not tests/stryker-config.json.
+      - name: Stage Root Config For Discovery
+        run: cp tests/stryker-config.json stryker-config.json
+
+      - name: Run Local Action (default config discovery)
+        id: stryker-default-config
+        uses: ./
+        with:
+          strykerArgs: "--reporter markdown --reporter json"
+
+      - name: Remove Root Config
+        if: always()
+        run: rm -f stryker-config.json
+
+      - name: Verify Outputs (default config discovery)
+        run: |
+          set -euo pipefail
+
+          test -n "${{ steps.stryker-default-config.outputs.reportDirectory }}"
+          test -n "${{ steps.stryker-default-config.outputs.mutationScore }}"
+          test "${{ steps.stryker-default-config.outputs.thresholdStatus }}" = "passed"
+
+      # Scenario: writeStepSummary=false — no Stryker content should be
+      # appended to the job summary.
+      - name: Capture Step Summary Line Count (before)
+        id: summary-before
+        run: echo "lines=$(wc -l < "$GITHUB_STEP_SUMMARY")" >> "$GITHUB_OUTPUT"
+
+      - name: Run Local Action (writeStepSummary false)
+        id: stryker-no-summary
+        uses: ./
+        with:
+          configFile: tests/stryker-config.json
+          strykerArgs: "--reporter markdown --reporter json"
+          writeStepSummary: "false"
+
+      - name: Verify Step Summary Unchanged
+        run: |
+          set -euo pipefail
+          after_lines=$(wc -l < "$GITHUB_STEP_SUMMARY")
+          test "${{ steps.summary-before.outputs.lines }}" = "${after_lines}"
+
+      # Scenario: --reporter html — htmlReportPath is never exercised by the
+      # happy path above, which only requests markdown + json.
+      - name: Run Local Action (html reporter)
+        id: stryker-html
+        uses: ./
+        with:
+          configFile: tests/stryker-config.json
+          strykerArgs: "--reporter html"
+
+      - name: Verify Outputs (html reporter)
+        run: |
+          set -euo pipefail
+          test -n "${{ steps.stryker-html.outputs.htmlReportPath }}"
+          test -f "${{ steps.stryker-html.outputs.htmlReportPath }}"

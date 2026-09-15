@@ -1,0 +1,14 @@
+{
+  "stryker-config": {
+    "solution": "tests/Sample.slnx",
+    "test-projects": [
+      "tests/Sample.Unit.Tests/Sample.Unit.Tests.csproj"
+    ],
+    "project": "Sample.csproj",
+    "thresholds": {
+      "high": 80,
+      "low": 60,
+      "break": 0
+    }
+  }
+}
