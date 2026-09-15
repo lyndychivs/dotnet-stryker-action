@@ -86,6 +86,12 @@ else
   echo "config-file: not provided; using Stryker default configuration discovery"
 fi
 
+# Clear leftover report output so find_latest_report_dir can't pick up a stale
+# report from an earlier run sharing this workspace, even when this run exits
+# early below without invoking dotnet-stryker. Best-effort: a leftover
+# directory that can't be removed shouldn't abort the whole action.
+find . -type d -name StrykerOutput -exec rm -rf {} + || true
+
 if [ "${config_missing}" = true ]; then
   exit_code=1
 else
@@ -108,11 +114,6 @@ else
     set -- "$@" ${stryker_args}
     set +f
   fi
-
-  # Clear leftover report output so find_latest_report_dir can't pick up a stale
-  # report from an earlier run sharing this workspace. Best-effort: a leftover
-  # directory that can't be removed shouldn't abort the whole action.
-  find . -type d -name StrykerOutput -exec rm -rf {} + || true
 
   set +e
   dotnet-stryker "$@"

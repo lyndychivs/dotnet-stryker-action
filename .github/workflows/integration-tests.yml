@@ -90,6 +90,28 @@ jobs:
           test -f "${{ steps.stryker.outputs.markdownSummaryPath }}"
           test -f "${{ steps.stryker.outputs.jsonReportPath }}"
 
+      # Scenario: configFile missing, but the happy-path run above already
+      # left a StrykerOutput report directory in this workspace. The action
+      # must clear it and not report that stale run's paths as its own.
+      - name: Run Local Action (invalid configFile after prior report)
+        id: stryker-invalid-config-stale
+        continue-on-error: true
+        uses: ./
+        with:
+          configFile: tests/does-not-exist.json
+
+      - name: Verify Outputs (invalid configFile after prior report)
+        run: |
+          set -euo pipefail
+
+          test "${{ steps.stryker-invalid-config-stale.outcome }}" = "failure"
+          test "${{ steps.stryker-invalid-config-stale.outputs.thresholdStatus }}" = "failed"
+          test -z "${{ steps.stryker-invalid-config-stale.outputs.reportDirectory }}"
+          test -z "${{ steps.stryker-invalid-config-stale.outputs.mutationScore }}"
+          test -z "${{ steps.stryker-invalid-config-stale.outputs.jsonReportPath }}"
+          test -z "${{ steps.stryker-invalid-config-stale.outputs.markdownSummaryPath }}"
+          test -z "${{ steps.stryker-invalid-config-stale.outputs.htmlReportPath }}"
+
       # Scenario: a --break-at threshold above the config's threshold-low (101
       # vs. tests/stryker-config.json's 60) makes dotnet-stryker reject the
       # run during threshold validation, before any mutants are tested — no
