@@ -25,7 +25,10 @@ Everything Stryker supports beyond a config file should go through `strykerArgs`
 
 ## Stryker Dashboard
 
-Pass `STRYKER_DASHBOARD_API_KEY` via workflow environment to supply the API key, and add `--reporter dashboard` to `strykerArgs` to enable dashboard reporting — the environment variable alone does not turn the reporter on.
+Pass `STRYKER_DASHBOARD_API_KEY` via workflow environment to supply the API key.
+
+> [!NOTE]
+> The environment variable alone does not turn the reporter on (see `reporter` parameter).
 
 ## Example
 
