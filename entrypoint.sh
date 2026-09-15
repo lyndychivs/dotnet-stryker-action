@@ -80,6 +80,7 @@ detect_threshold_status() {
 # Allows tests to source this script for its functions without running the
 # rest of it (which invokes dotnet-stryker and expects GitHub Actions env vars).
 if [ "${ENTRYPOINT_SOURCE_ONLY:-}" = "1" ]; then
+  # shellcheck disable=SC2317
   return 0 2>/dev/null || exit 0
 fi
 
