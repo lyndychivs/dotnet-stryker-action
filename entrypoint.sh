@@ -47,7 +47,7 @@ detect_mutation_score() {
       | ($s | map(select(. == "Killed" or . == "Timeout")) | length) as $detected
       | ($s | map(select(. == "Killed" or . == "Timeout" or . == "Survived" or . == "NoCoverage")) | length) as $total
       | if $total == 0 then "" else (($detected / $total * 100) * 100 | round / 100 | tostring) end
-    ' "${json_report}" 2>/dev/null)
+    ' "${json_report}" 2>/dev/null) || score_value=""
     if [ -n "${score_value}" ]; then
       printf '%s%%\n' "${score_value}"
       return 0
@@ -71,6 +71,12 @@ detect_threshold_status() {
     printf 'failed\n'
   fi
 }
+
+# Allows tests to source this script for its functions without running the
+# rest of it (which invokes dotnet-stryker and expects GitHub Actions env vars).
+if [ "${ENTRYPOINT_SOURCE_ONLY:-}" = "1" ]; then
+  return 0 2>/dev/null || exit 0
+fi
 
 configuration_file="${INPUT_CONFIGFILE:-}"
 config_missing=false

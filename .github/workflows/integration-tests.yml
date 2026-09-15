@@ -26,6 +26,9 @@ jobs:
           set -euo pipefail
           dotnet test tests/Sample.slnx --configuration Release
 
+      - name: Run entrypoint.sh Unit Tests
+        run: sh tests/entrypoint_unit.sh
+
       # Scenario: an invalid Stryker CLI flag makes dotnet-stryker fail before
       # producing any report — every report-path output should stay empty.
       - name: Run Local Action (invalid strykerArgs)
