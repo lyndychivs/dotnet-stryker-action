@@ -105,10 +105,6 @@ fi
 # invocation's report before it's been read.
 report_marker=$(mktemp)
 trap 'rm -f "${report_marker}"' EXIT
-# Back-date the marker so it's older than this run's report dir even on a
-# filesystem with coarse (e.g. 1-second) mtime resolution, in case
-# dotnet-stryker somehow produces a report within the same tick.
-touch -d '-2 seconds' "${report_marker}"
 
 if [ "${config_missing}" = true ]; then
   exit_code=1
