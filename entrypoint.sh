@@ -34,7 +34,9 @@ find_first_report() {
 }
 
 find_latest_report_dir() {
-  find . -type d -name reports -path '*/StrykerOutput/*/reports' | sort | tail -n 1
+  since_marker="$1"
+
+  find . -type d -name reports -path '*/StrykerOutput/*/reports' -newer "${since_marker}" | sort | tail -n 1
 }
 
 detect_mutation_score() {
@@ -55,7 +57,10 @@ detect_mutation_score() {
   fi
 
   if [ -n "${markdown_report}" ] && [ -f "${markdown_report}" ]; then
-    sed -n 's/.*final mutation score is \([0-9.][0-9.]*%\).*/\1/p' "${markdown_report}" | tail -n 1
+    # Stryker's markdown reporter formats the percentage using the active
+    # .NET culture, which may use a comma as the decimal separator; normalize
+    # to a period so the output is consistent regardless of locale.
+    sed -n 's/.*final mutation score is \([0-9.,][0-9.,]*%\).*/\1/p' "${markdown_report}" | tail -n 1 | tr ',' '.'
     return 0
   fi
 
@@ -92,11 +97,14 @@ else
   echo "config-file: not provided; using Stryker default configuration discovery"
 fi
 
-# Clear leftover report output so find_latest_report_dir can't pick up a stale
-# report from an earlier run sharing this workspace, even when this run exits
-# early below without invoking dotnet-stryker. Best-effort: a leftover
-# directory that can't be removed shouldn't abort the whole action.
-find . -type d -name StrykerOutput -exec rm -rf {} + || true
+# Record when this run started so find_latest_report_dir can tell this run's
+# report apart from a stale one left by an earlier invocation sharing this
+# workspace (e.g. a workflow that calls this action more than once), even
+# when this run exits early below without invoking dotnet-stryker. Unlike
+# deleting leftover StrykerOutput directories, this can't destroy another
+# invocation's report before it's been read.
+report_marker=$(mktemp)
+trap 'rm -f "${report_marker}"' EXIT
 
 if [ "${config_missing}" = true ]; then
   exit_code=1
@@ -127,7 +135,7 @@ else
   set -e
 fi
 
-report_dir=$(find_latest_report_dir)
+report_dir=$(find_latest_report_dir "${report_marker}")
 html_report=""
 json_report=""
 markdown_report=""

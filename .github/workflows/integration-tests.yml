@@ -95,7 +95,7 @@ jobs:
 
       # Scenario: configFile missing, but the happy-path run above already
       # left a StrykerOutput report directory in this workspace. The action
-      # must clear it and not report that stale run's paths as its own.
+      # must not report that stale run's paths as its own.
       - name: Run Local Action (invalid configFile after prior report)
         id: stryker-invalid-config-stale
         continue-on-error: true

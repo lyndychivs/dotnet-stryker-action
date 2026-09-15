@@ -49,6 +49,14 @@ printf 'The final mutation score is 42.5%%\n' > "${markdown_report}"
 score=$(detect_mutation_score "${markdown_report}" "${malformed_json}")
 assert_eq "malformed json report falls back to markdown score" "42.5%" "${score}"
 
+# Stryker's markdown reporter formats the score using the active .NET
+# culture, which may use a comma as the decimal separator.
+comma_markdown_report="${tmp_dir}/report-comma.md"
+printf 'The final mutation score is 60,00%%\n' > "${comma_markdown_report}"
+
+score=$(detect_mutation_score "${comma_markdown_report}" "")
+assert_eq "comma decimal separator in markdown score is normalized to a period" "60.00%" "${score}"
+
 # A well-formed json report should still be parsed normally.
 valid_json="${tmp_dir}/valid.json"
 cat > "${valid_json}" <<'EOF'
@@ -76,6 +84,26 @@ for falsy in false FALSE 0 no off "" maybe; do
     echo "PASS: is_true rejects '${falsy}'"
   fi
 done
+
+# find_latest_report_dir must ignore a StrykerOutput/*/reports directory that
+# already existed before this run's marker was created, so a stale report
+# left by an earlier invocation sharing the workspace isn't mistaken for this
+# run's report.
+report_root="${tmp_dir}/report-root"
+mkdir -p "${report_root}/StrykerOutput/2000-01-01/reports"
+touch -d "2000-01-01" "${report_root}/StrykerOutput/2000-01-01/reports"
+
+report_marker="${tmp_dir}/report-marker"
+touch -d "2020-01-01" "${report_marker}"
+
+result=$(cd "${report_root}" && find_latest_report_dir "${report_marker}")
+assert_eq "find_latest_report_dir ignores a report dir older than the marker" "" "${result}"
+
+mkdir -p "${report_root}/StrykerOutput/2024-01-01/reports"
+touch -d "2024-01-01" "${report_root}/StrykerOutput/2024-01-01/reports"
+
+result=$(cd "${report_root}" && find_latest_report_dir "${report_marker}")
+assert_eq "find_latest_report_dir picks up a report dir newer than the marker" "./StrykerOutput/2024-01-01/reports" "${result}"
 
 # detect_threshold_status
 assert_eq "exit code 0 is a passed threshold" "passed" "$(detect_threshold_status 0)"
