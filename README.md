@@ -54,6 +54,6 @@ jobs:
         with:
           configFile: "stryker-config.json"
           strykerArgs: >-
-            --reporter markdown --reporter json --reporter dashboard
-            --threshold-high 85 --threshold-low 70 --break-at 65
+            --reporter progress --reporter dashboard --reporter json
+            --version ${{ github.ref_name }}
 ```
